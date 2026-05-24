@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BattleWarSettings</title>
+  <link rel="stylesheet" href="style.css">
+<style>
+.settings-title {
+  text-align: center;
+  margin: 40px 0 20px;
+  font-size: 32px;
+  color: white;
+}
+
+.settings-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: #555;
+}
+
+.triangle-back {
+  display: flex;
+  justify-content: center;
+  margin-top: -10px;
+}
+
+.triangle-btn {
+  width: 100px;
+  height: 60px;
+  background-color: #444;
+  color: white;
+  font-weight: bold;
+  border: none;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.triangle-btn:hover {
+  background-color: #666;
+}
+
+.settings-panel {
+  background-color: #222;
+  border: 2px solid #555;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px auto;
+  width: 80%;
+  color: white;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.setting-row label {
+  font-weight: bold;
+  font-size: 16px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex: 2;
+  justify-content: flex-start;
+}
+
+.setting-btn {
+  padding: 8px 16px;
+  font-weight: bold;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.setting-btn:hover {
+  background-color: #666;
+}
+
+.ai-choice-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.ai-card {
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+}
+
+.ai-thumbnail {
+  width: 100px;
+  height: 100px;
+  background-color: #333;
+  border: 2px solid #666;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+.more-settings-label {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.save-load-label {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.setting-btn.selected {
+  background-color: #0a84ff;
+  color: white;
+}
+
+
+</style>
+</head>
+<body>
+
+<h1 class="settings-title">Settings</h1>
+
+<div class="settings-tabs">
+  <button class="tab-btn">Online</button>
+  <button class="tab-btn">Fire</button>
+  <button class="tab-btn">Explosion</button>
+  <button class="tab-btn">Weapon</button>
+  <button class="tab-btn">AI</button>
+</div>
+
+
+
+<div class="triangle-back">
+  <a href="index.html" class="triangle-btn">Back</a>
+</div>
+
+
+<div class="settings-panel">
+  <div class="setting-row">
+    <label>Connection Rate:</label>
+    <div class="button-group">
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">3 or Higher</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Choose Regionally?</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">No</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Random Difficulty?</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">No</button>
+    </div>
+  </div>
+
+ <div class="setting-row">
+  <label>Friendly Fire?</label>
+  <div class="button-group">
+    <button class="setting-btn">Yes</button>
+    <button class="setting-btn">No</button>
+  </div>
+ </div>
+
+ <div class="setting-row">
+  <label>Able to Surrender Mid-Game?</label>
+  <div class="button-group">
+    <button class="setting-btn">Yes</button>
+    <button class="setting-btn">No</button>
+  </div>
+ </div>
+</div>
+
+<div class="settings-panel">
+  <div class="setting-row">
+    <label>Fire Lengthtivity:</label>
+    <div class="button-group">
+      <button class="setting-btn">0.5</button>
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">5</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Fire Spreads?</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">Not for me</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Fire Spread Rate:</label>
+    <div class="button-group">
+      <button class="setting-btn">0.25</button>
+      <button class="setting-btn">0.5</button>
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Fire Damage:</label>
+    <div class="button-group">
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">3</button>
+      <button class="setting-btn">4</button>
+      <button class="setting-btn">5</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Fire Effect:</label>
+    <div class="button-group">
+      <button class="setting-btn">Visible</button>
+      <button class="setting-btn">Opaque</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Should Fire Even Exist?</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">NO!</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Tree Catches Fire?</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">Ack so scary, no!</button>
+    </div>
+  </div>
+</div>
+
+<div class="settings-panel">
+  <div class="setting-row">
+    <label>Explosion Lengthtivity:</label>
+    <div class="button-group">
+      <button class="setting-btn">5</button>
+      <button class="setting-btn">10</button>
+      <button class="setting-btn">20</button>
+      <button class="setting-btn">50</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Explosion Shrink Rate:</label>
+    <div class="button-group">
+      <button class="setting-btn">0.5</button>
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Landmine Range:</label>
+    <div class="button-group">
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">3</button>
+      <button class="setting-btn">4</button>
+      <button class="setting-btn">5</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Missile Blast Range:</label>
+    <div class="button-group">
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">5</button>
+      <button class="setting-btn">10</button>
+      <button class="setting-btn">15</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Flak Explosion Range:</label>
+    <div class="button-group">
+      <button class="setting-btn">3</button>
+      <button class="setting-btn">4</button>
+      <button class="setting-btn">5</button>
+      <button class="setting-btn">10</button>
+      <button class="setting-btn">The whole sky</button>
+    </div>
+  </div>
+
+<div class="settings-panel">
+  <div class="setting-row">
+    <label>Damage Done:</label>
+    <div class="button-group">
+      <button class="setting-btn">3</button>
+      <button class="setting-btn">4</button>
+      <button class="setting-btn">5</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Effect?</label>
+    <div class="button-group">
+      <button class="setting-btn">Visible</button>
+      <button class="setting-btn">Opaque</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Explosions:</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">NO!</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="settings-panel">
+  <div class="setting-row">
+    <label>Cannon Range:</label>
+    <div class="button-group">
+      <button class="setting-btn">0.25</button>
+      <button class="setting-btn">0.5</button>
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">2.5</button>
+      <button class="setting-btn">3</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Tankfire:</label>
+    <div class="button-group">
+      <button class="setting-btn">0.5</button>
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">3</button>
+      <button class="setting-btn">4</button>
+      <button class="setting-btn">5</button>
+      <button class="setting-btn">6</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Flak Height:</label>
+    <div class="button-group">
+      <button class="setting-btn">5</button>
+      <button class="setting-btn">7</button>
+      <button class="setting-btn">9</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Missile Range:</label>
+    <div class="button-group">
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">4</button>
+      <button class="setting-btn">6</button>
+      <button class="setting-btn">8</button>
+      <button class="setting-btn">10</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Gunfire Scope:</label>
+    <div class="button-group">
+      <button class="setting-btn">0.1</button>
+      <button class="setting-btn">0.2</button>
+      <button class="setting-btn">0.5</button>
+      <button class="setting-btn">0.7</button>
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+    </div>
+  </div>
+</div>
+
+<div class="settings-panel">
+  <div class="setting-row">
+    <label>Counter-Tactics:</label>
+    <div class="button-group">
+      <button class="setting-btn">High use</button>
+      <button class="setting-btn">Low use</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>AI HP Buff ×0.5:</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">No</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>AI Mistake Correction:</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">No</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Aggressiveness Change by Gameplay:</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">No</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>AI Pitying?</label>
+    <div class="button-group">
+      <button class="setting-btn">Yes</button>
+      <button class="setting-btn">No</button>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Choose AI:</label>
+    <div class="ai-choice-row">
+      <div class="ai-card">
+        <div class="ai-thumbnail">[Thumbnail]</div>
+        <button class="setting-btn">Simpleton</button>
+      </div>
+      <div class="ai-card">
+        <div class="ai-thumbnail">[Thumbnail]</div>
+        <button class="setting-btn">General Harold</button>
+      </div>
+      <div class="ai-card">
+        <div class="ai-thumbnail">[Thumbnail]</div>
+        <button class="setting-btn">Commander Ava</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="settings-panel">
+  <h2 class="more-settings-label" onclick="toggleDropdown()">More Settings ▼</h2>
+
+  <div id="moreSettingsDropdown" style="display:none;">
+    <div class="setting-row">
+      <button class="setting-btn">Water Settings (Impossible Pack Only)</button>
+    </div>
+
+    <div id="waterSettings" style="display:none; margin-top: 20px;">
+      <div class="setting-row">
+        <label>Water Density:</label>
+        <div class="button-group">
+          <button class="setting-btn">100</button>
+          <button class="setting-btn">200</button>
+          <button class="setting-btn">500</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>Bubbles?</label>
+        <div class="button-group">
+          <button class="setting-btn">Yes</button>
+          <button class="setting-btn">No</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>Pressure:</label>
+        <div class="button-group">
+          <button class="setting-btn">2K</button>
+          <button class="setting-btn">4K</button>
+          <button class="setting-btn">8K</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>Water Heat Up?</label>
+        <div class="button-group">
+          <button class="setting-btn">Yes</button>
+          <button class="setting-btn">No</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>AI Water Advantage?</label>
+        <div class="button-group">
+          <button class="setting-btn">Low</button>
+          <button class="setting-btn">High</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleDropdown() {
+  const dropdown = document.getElementById('moreSettingsDropdown');
+  dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+}
+
+// Optional: unlock water settings only if Impossible Pack is active
+let impossiblePackUnlocked = true; // Change to false to hide
+
+if (impossiblePackUnlocked) {
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('waterSettings').style.display = 'block';
+  });
+}
+</script>
+
+<div class="settings-panel">
+  <h2 class="save-load-label">Save & Load Settings</h2>
+
+  <div class="setting-row">
+    <button class="setting-btn" onclick="saveSettings()">💾 Save Settings</button>
+    <button class="setting-btn" onclick="loadSettings()">📂 Load Settings</button>
+    <button class="setting-btn" onclick="resetSettings()">🔄 Reset to Defaults</button>
+  </div>
+</div>
+
+<script>
+function saveSettings() {
+  const buttons = document.querySelectorAll('.setting-btn');
+  const settings = {};
+  buttons.forEach(btn => {
+    if (btn.classList.contains('selected')) {
+      const label = btn.closest('.setting-row')?.querySelector('label')?.textContent || 'misc';
+      settings[label] = btn.textContent;
+    }
+  });
+  localStorage.setItem('battlewarSettings', JSON.stringify(settings));
+  alert('Settings saved!');
+}
+
+function loadSettings() {
+  const saved = JSON.parse(localStorage.getItem('battlewarSettings') || '{}');
+  document.querySelectorAll('.setting-btn').forEach(btn => {
+    const label = btn.closest('.setting-row')?.querySelector('label')?.textContent || 'misc';
+    if (saved[label] === btn.textContent) {
+      btn.classList.add('selected');
+    } else {
+      btn.classList.remove('selected');
+    }
+  });
+  alert('Settings loaded!');
+}
+
+function resetSettings() {
+  localStorage.removeItem('battlewarSettings');
+  document.querySelectorAll('.setting-btn').forEach(btn => btn.classList.remove('selected'));
+  alert('Settings reset to defaults.');
+}
+</script>
+
+<script>
+document.querySelectorAll('.setting-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.parentElement.querySelectorAll('.setting-btn');
+    group.forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+
+</script>
+<div class="triangle-back">
+  <a href="index.html" class="triangle-btn">Back</a>
+</div>
+
+
+</body>
+</html>

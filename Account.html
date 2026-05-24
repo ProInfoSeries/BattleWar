@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BattleWarAccount</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<style>
+.account-title {
+  text-align: center;
+  font-size: 32px;
+  color: white;
+  margin: 30px 0;
+}
+
+.account-box {
+  background-color: #222;
+  border: 2px solid #555;
+  border-radius: 10px;
+  padding: 30px;
+  width: 80%;
+  margin: auto;
+  color: white;
+}
+
+.username-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #888;
+  background-color: #333;
+  color: white;
+}
+
+.username-input::placeholder {
+  color: #888;
+}
+
+#xp-bar {
+  width: 100%;
+  height: 20px;
+  margin-top: 10px;
+}
+
+.xp-label {
+  text-align: right;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.stats p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.account-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.account-btn:hover {
+  background-color: #666;
+}
+
+.popup {
+  background-color: #333;
+  border: 2px solid #666;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.auth-buttons {
+  margin-top: 30px;
+}
+
+.back-btn {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #222;
+  padding: 30px;
+  border-radius: 10px;
+  color: white;
+  width: 300px;
+  text-align: center;
+}
+
+
+
+</style>
+<h1 class="account-title">Your Account</h1>
+
+<div class="account-box">
+  <input type="text" id="username" placeholder="Username" class="username-input">
+
+  <label for="xp-bar">XP Progress</label>
+  <progress id="xp-bar" value="0" max="5000"></progress>
+  <p class="xp-label">0 / 5000 XP</p>
+  <p id="levelDisplay">Level: 0</p>
+
+<div class="xp-controls">
+  <input type="number" id="xpInput" placeholder="Add XP" min="0">
+  <button onclick="addXP()">Gain XP</button>
+</div>
+
+
+  <div class="stats">
+    <p>Maps Played: <span id="mapsPlayed">0</span></p>
+    <p>Online Plays: <span id="onlinePlays">0</span></p>
+    <p>Local Wins: <span id="localWins">0</span></p>
+    <p>Online Wins: <span id="onlineWins">0</span></p>
+  </div>
+
+  <button class="account-btn" onclick="showPartyPopup()">Create Party</button>
+
+  <div id="partyPopup" class="popup" style="display:none;">
+    <p>Your Party Code: <strong>ABCDEF12</strong></p>
+    <button onclick="closePartyPopup()">Close</button>
+  </div>
+
+  <div class="party-actions">
+    <input type="text" placeholder="Enter Party Code" id="joinCode">
+    <button class="account-btn">Join Party</button>
+
+    <button class="account-btn" id="leavePartyBtn" style="display:none;">Leave Party</button>
+
+    <input type="text" placeholder="Invite Username" id="inviteUser">
+    <button class="account-btn">Invite to Party</button>
+  </div>
+
+  <div class="auth-buttons">
+   <button class="account-btn" onclick="openModal('signinModal')">Sign In</button>
+<button class="account-btn" onclick="openModal('signupModal')">Sign Up</button>
+
+
+    <a href="index.html" class="back-btn"> Back </a>
+  </div>
+</div>
+
+<div id="signinModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h2>Sign In</h2>
+    <input type="text" placeholder="Username">
+    <input type="password" placeholder="Password">
+    <button onclick="submitSignIn()">Submit</button>
+    <button onclick="closeModal('signinModal')">Close</button>
+  </div>
+</div>
+
+
+<div id="signupModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h2>Sign Up</h2>
+    <input type="text" placeholder="Username">
+    <input type="password" placeholder="Password">
+    <button onclick="submitSignUp()">Submit</button>
+    <button onclick="closeModal('signupModal')">Close</button>
+  </div>
+</div>
+
+
+
+<script>
+function showPartyPopup() {
+  document.getElementById('partyPopup').style.display = 'block';
+}
+
+function closePartyPopup() {
+  document.getElementById('partyPopup').style.display = 'none';
+}
+
+
+let currentXP = 0;
+let currentLevel = 0;
+const xpPerLevel = 5000;
+
+function addXP() {
+  const input = document.getElementById('xpInput');
+  const xpToAdd = parseInt(input.value);
+  if (isNaN(xpToAdd) || xpToAdd <= 0) return;
+
+  currentXP += xpToAdd;
+  input.value = '';
+
+  // Level up logic
+  while (currentXP >= xpPerLevel) {
+    currentXP -= xpPerLevel;
+    currentLevel++;
+  }
+
+  updateXPDisplay();
+}
+
+function updateXPDisplay() {
+  document.getElementById('xp-bar').value = currentXP;
+  document.querySelector('.xp-label').textContent = `${currentXP} / ${xpPerLevel} XP`;
+  document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
+}
+
+function openModal(id) {
+  document.getElementById(id).style.display = 'flex';
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function submitSignIn() {
+  alert("Sign In submitted!");
+  closeModal('signinModal');
+}
+
+function submitSignUp() {
+  alert("Sign Up submitted!");
+  closeModal('signupModal');
+}
+
+
+
+</script>
+</body>
+</html>

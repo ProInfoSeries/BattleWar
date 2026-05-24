@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BattleWar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+
+  <link rel="stylesheet" href="style.css">
+
+<style>
+ .trapezoid-title {
+  width: 300px;
+  height: 80px;
+  background-color: #444;
+  clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px auto;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+
+ .trapezoid-title h1 {
+  font-family: 'UnifrakturMaguntia', cursive;
+}
+
+
+body {
+  font-family: 'Permanent Marker', cursive;
+}
+
+
+body {
+  background-color: #1A2265;
+}
+
+</style>
+</head>
+<body>
+  <div class="trapezoid-title">
+    <h1>BattleWar</h1>
+  </div>
+
+  <div class="menu">
+    <a href="play.html" class="button">Play</a>
+   <a href="settings.html" class="button">Settings</a>
+<a href="sound.html" class="button">Sound</a>
+<a href="account.html" class="button">Account</a>
+
+
+
+    <h2>Instructions</h2>
+<div class="instructions">
+  Player 1 uses Key I to select, J,K,L,M to move.<br>
+  Player 2 uses Key S to select, Z,X,C,V to move.<br>
+  Player 3 uses Key 1 to select, 2,3,4,5 to move.
+</div>
+
+
+    <label for="volume">Volume:</label>
+    <input type="range" id="volume" min="0" max="100" value="50">
+
+    <div class="customization">
+      <h2>Customization</h2>
+      <label><input type="radio" name="graphics" value="10"> Ultra Low (10%)</label><br>
+      <label><input type="radio" name="graphics" value="25"> Low (25%)</label><br>
+      <label><input type="radio" name="graphics" value="50"> Medium (50%)</label><br>
+      <label><input type="radio" name="graphics" value="75"> High (75%)</label><br>
+      <label><input type="radio" name="graphics" value="100"> Ultra High (100%)</label>
+    </div>
+  </div>
+
+  <footer>
+    <p>© Proinfoseries & MyInfoSeries2025</p>
+    <p>[Alpha] Version 2.1.2</p>
+    <img src="assets/myinfoseries_logo.png" alt="MyInfoSeries Logo" width="100">
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BattleWarPlay</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Triangle Labels */
+    .triangle-labels {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+
+    .triangle {
+      color: white;
+      font-weight: bold;
+      padding: 10px 20px;
+    }
+
+    .triangle.right {
+  width: 200px;
+  height: 200px;
+  background: #444;
+  /* vertices: top-left, bottom-right, bottom-left */
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10px;
+  color: white;
+  font-size: 20px;
+}
+
+
+    .triangle.left {
+  width: 200px;
+  height: 200px;
+  background: #444;
+  /* vertices: top-right, bottom-left, bottom-right */
+  clip-path: polygon(100% 0, 0 100%, 100% 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10px;
+  color: white;
+  font-size: 20px;
+}
+
+
+
+.mode-row {
+  display: flex;
+  justify-content: center; /* center everything */
+  align-items: center;gap: clamp(20px, 8vw, 80px);
+  margin-bottom: 20px;
+}
+
+
+.mode-labels {
+  display: flex;
+  gap: 40px; /* spacing between Singleplayer and Multiplayer */
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  font-family: 'Permanent Marker', cursive;
+  color: black;
+}
+
+.difficulty-header {
+  text-align: center;
+  margin: 30px 0 10px;
+  font-size: 24px;
+  color: black; /* matches your theme */
+}
+
+
+
+    /* Difficulty Buttons */
+    .difficulty-section {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .difficulty-box {
+      text-align: center;
+      width: 22%;
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .difficulty-box button {
+      width: 100%;
+      padding: 10px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+
+    /* Bottom Triangle Labels */
+    .triangle-labels.bottom {
+      margin-top: 10px;
+    }
+
+.featured-heading {
+  text-align: center;
+  margin: 40px 0 20px;
+  font-size: 28px;
+}
+
+.map-gallery {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.map-card {
+  flex: 1;
+  min-width: 150px;
+  max-width: 180px;
+  text-align: center;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100px;
+  background-color: #ccc;
+  border: 2px solid #888;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #444;
+}
+
+.map-tools-heading {
+  text-align: center;
+  margin: 40px 0 20px;
+  font-size: 26px;
+}
+
+.map-tools-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.map-tool-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.map-tool-btn:hover {
+  background-color: #666;
+}
+
+.nation-heading {
+  text-align: center;
+  margin: 40px 0 20px;
+  font-size: 26px;
+}
+
+.nation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.nation-buttons button {
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.stockcard {
+  background-color: #f0f0f0;
+  border: 2px solid #888;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px auto 30px;
+  width: 80%;
+  text-align: center;
+  font-size: 16px;
+}
+
+.back-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: #666;
+}
+
+
+
+  </style>
+</head>
+<body>
+
+  
+  <a href="index.html" class="back-btn"> Back </a>
+
+
+
+ 
+  <div class="mode-row">
+  <div class="triangle left">You and AI</div>
+
+  <div class="mode-labels">
+    <h2>Singleplayer</h2>
+    <h2>Multiplayer</h2>
+  </div>
+
+  <div class="triangle right">Online</div>
+</div>
+
+<h2 class="difficulty-header">Difficulty</h2>
+
+
+  
+  <div class="difficulty-section">
+    <div class="difficulty-box">
+      <button>Simple</button>
+      <p>AI has no precision on attack</p>
+    </div>
+    <div class="difficulty-box">
+      <button>Easy</button>
+      <p>AI has less precision</p>
+    </div>
+    <div class="difficulty-box">
+      <button>Normal</button>
+      <p>AI has more precision and access to all weapons</p>
+    </div>
+    <div class="difficulty-box">
+      <button>Hard</button>
+      <p>AI has perfect precision and infinite ammo</p>
+    </div>
+  </div>
+
+
+  <div class="triangle-labels bottom">
+    <div class="triangle left">2 Player</div>
+    <div class="triangle right">Party</div>
+  </div>
+
+<h2 class="featured-heading">Featured Maps</h2>
+
+<div class="map-gallery">
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Nijmegen – 1942</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Scånia – 1942</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Stockholm – 1942</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Stockholm – 1943</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Bern – 1944</p>
+  </div>
+</div>
+
+
+<div class="map-gallery">
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Berlin – 1945</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Warzsawa – 1945 (3 Player)</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Viet Dai/Nam – 1970</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Moskau – 1941</p>
+  </div>
+</div>
+
+
+
+<div class="map-gallery">
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Afghanistan – 1988 (3 Player + AI)</p>
+  </div>
+
+
+
+
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Afghanistan – 2011</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Koreas – 1951</p>
+  </div>
+  <div class="map-card">
+    <div class="thumbnail">[Thumbnail]</div>
+    <p>Syria – 2024</p>
+  </div>
+</div>
+<h2 class="map-tools-heading">Map Tools</h2>
+
+<div class="map-tools-row">
+  <button class="map-tool-btn">Map Packs</button>
+  <button class="map-tool-btn">Random Map</button>
+  <button class="map-tool-btn">Monthly Map</button>
+</div>
+
+<h2 class="nation-heading">Nations</h2>
+
+<div class="nation-buttons">
+  <button onclick="toggleCard('oldetimeCard')">Old Nations</button>
+  <button onclick="toggleCard('WartimeCard')">War-Time</button>
+  <button onclick="toggleCard('othersCard')">Others</button>
+</div>
+
+<div id="oldetimeCard" class="stockcard" style="display:none;">
+  <p>French Bourbonate, Great Britain, Confederatia Helvetica </p>
+</div>
+
+<div id="WartimeCard" class="stockcard" style="display:none;">
+  <p>Frisia, Nederlaand, Third Reiche, Denmark, Sweden, Weimer Provisione, Soviet Unitions, Polish Duchy, Reicheskommissariat</p>
+</div>
+
+<div id="othersCard" class="stockcard" style="display:none;">
+  <p>United States, Khalq, Commune, Taliban, ISIS, HTS, Syria, Vietnam, Viet Dai, Afghanistan, DPRK, ROK, Japan</p>
+</div>
+
+<script>
+function toggleCard(id) {
+  const cards = document.querySelectorAll('.stockcard');
+  cards.forEach(card => card.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+</script>
+
+
+
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+

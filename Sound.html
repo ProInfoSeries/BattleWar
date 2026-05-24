@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BattleWarSound</title>
+  <link rel="stylesheet" href="style.css">
+
+
+<style>
+
+.sfx-settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+
+.sfx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #222;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  flex-wrap: wrap;
+}
+
+.sfx-label-toggle {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 200px;
+  color: white;
+}
+
+.sfx-volume {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 200px;
+  color: white;
+}
+
+.sfx-volume input[type="range"] {
+  width: 100%;
+  margin-top: 6px;
+}
+.back-button-container {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.back-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: #666;
+}
+</style>
+</head>
+
+
+<body>
+<div class="back-button-container">
+  <a href="index.html" class="back-btn">← Back</a>
+</div>
+
+<h1 class="settings-title">Sound Settings</h1>
+
+<div class="sound-grid">
+ 
+  <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="fireSFX">Fire SFX</label>
+      <input type="checkbox" id="fireSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="fireVolume">SFX Volume</label>
+      <input type="range" id="fireVolume" min="25" max="100" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="ShotSFX">Shot SFX</label>
+      <input type="checkbox" id="ShotSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="ShotVolume">ShotSFX Volume</label>
+      <input type="range" id="ShotVolume" min="15" max="60" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="MoveSFX">Move SFX</label>
+      <input type="checkbox" id="MoveSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="MoveVolume">Move Volume</label>
+      <input type="range" id="MoveVolume" min="25" max="100" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="ExplosionSFX">Explosion SFX</label>
+      <input type="checkbox" id="ExplosionSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="ExplosionSFX">Explosion Volume</label>
+      <input type="range" id="ExplosionVolume" min="15" max="60" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="GunSFX">Gun SFX</label>
+      <input type="checkbox" id="GunSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="GunVolume">Gun Volume</label>
+      <input type="range" id="GunVolume" min="15" max="60" value="75">
+    </div>
+  </div>
+
+</div>
+
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="FLAKSFX">FLAK SFX</label>
+      <input type="checkbox" id="FLAKSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="FLAKVolume">FLAK Volume</label>
+      <input type="range" id="FLAKVolume" min="15" max="60" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="DeathSFX">Death SFX</label>
+      <input type="checkbox" id="DeathSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="DeathVolume">Death Volume</label>
+      <input type="range" id="DeathVolume" min="50" max="99" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="HealthlossSFX">HealthLoss SFX</label>
+      <input type="checkbox" id="HealthlossSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="HealthlossVolume">Healthloss Volume</label>
+      <input type="range" id="HealthlossVolume" min="50" max="99" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="CheerSFX">Cheer SFX</label>
+      <input type="checkbox" id="CheerSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="Cheervolume">Cheer Volume</label>
+      <input type="range" id="Cheervolume" min="50" max="99" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="slidersfx">Slider SFX</label>
+      <input type="checkbox" id="slidersfx" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="slidervolume">Slider Volume</label>
+      <input type="range" id="slidervolume" min="5" max="100" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="putupSFX">Putup SFX</label>
+      <input type="checkbox" id="putupSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="putupVolume">Put-up Volume</label>
+      <input type="range" id="putupVolume" min="5" max="100" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="FallSFX">Fall SFX</label>
+      <input type="checkbox" id="fallSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="fallvolume">Fall Volume</label>
+      <input type="range" id="fallvolume" min="25" max="75" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="clangSFX">Clang SFX</label>
+      <input type="checkbox" id="clangSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="clangvolume">Clang Volume</label>
+      <input type="range" id="clangvolume" min="25" max="75" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="CrumbleSFX">Crumble SFX</label>
+      <input type="checkbox" id="crumbleSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="crumblevolume">Crumble Volume</label>
+      <input type="range" id="crumblevolume" min="25" max="75" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="Rainsfx">Rain SFX</label>
+      <input type="checkbox" id="rainSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="rainvolume">Rain Volume</label>
+      <input type="range" id="rainvolume" min="25" max="75" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="Crunchq">Crunch SFX</label>
+      <input type="checkbox" id="Crunchq" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="cruncha">Crunch Volume</label>
+      <input type="range" id="cruncha" min="5" max="99" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="snowsfx">Snow SFX</label>
+      <input type="checkbox" id="snowsfx" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="snowVolume">Snow Volume</label>
+      <input type="range" id="snowvolume" min="25" max="75" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="hailsfx">Hail SFX</label>
+      <input type="checkbox" id="hailsfx" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="hailvolume">Hail Volume</label>
+      <input type="range" id="hailvolume" min="25" max="75" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="flagsfx">Flag-wave SFX</label>
+      <input type="checkbox" id="flagSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="flagVolume">Flag-wave Volume</label>
+      <input type="range" id="flagVolume" min="5" max="100" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="windsfx">Wind SFX</label>
+      <input type="checkbox" id="windsfx" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="windVolume">Wind Volume</label>
+      <input type="range" id="windvolume" min="25" max="75" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="BURNSFX">BURN SFX</label>
+      <input type="checkbox" id="BURNSFX" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="BURNVOLUME">BURN Volume</label>
+      <input type="range" id="BURNVOLUME" min="25" max="100" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="charsfx">Char SFX</label>
+      <input type="checkbox" id="charsfx" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="charVolume">Char Volume</label>
+      <input type="range" id="charVolume" min="25" max="100" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="Motorsfx">Motor SFX</label>
+      <input type="checkbox" id="Motorsfx" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="Motorvolume">Motor Volume</label>
+      <input type="range" id="Motorvolume" min="5" max="100" value="75">
+    </div>
+  </div>
+ <div class="sound-row">
+    <div class="sound-label-toggle">
+      <label for="crysfx">Cry SFX</label>
+      <input type="checkbox" id="crysfx" checked>
+    </div>
+    <div class="sound-slider">
+      <label for="cryvolume">Cry Volume</label>
+      <input type="range" id="cryvolume" min="50" max="99" value="75">
+    </div>
+  </div>
+
+</script>
+</body>
+</html>
