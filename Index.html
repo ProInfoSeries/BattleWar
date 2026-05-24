@@ -39,6 +39,49 @@ body {
   background-color: #1A2265;
 }
 
+  /* Style the main Customization container */
+.customization {
+  background-color: #252d5a; /* Slightly lighter blue to pop out */
+  border: 3px solid #444;    /* Matches your gray trapezoid title */
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 400px;
+  text-align: left;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Style the Customization header */
+.customization h2 {
+  color: #fff;
+  margin-top: 0;
+  border-bottom: 2px solid #444;
+  padding-bottom: 5px;
+  font-family: 'Permanent Marker', cursive;
+}
+
+/* Style the labels and spacing for the radio buttons */
+.customization label {
+  display: block;
+  color: #ddd;
+  font-size: 18px;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* Make the text glow slightly when you hover over a setting */
+.customization label:hover {
+  color: #fff;
+  text-shadow: 0 0 5px #fff;
+}
+
+/* Style the actual radio buttons */
+.customization input[type="radio"] {
+  margin-right: 15px;
+  transform: scale(1.3); /* Makes the click circle bigger and easier to hit */
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
