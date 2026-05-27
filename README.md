@@ -6,4 +6,4 @@ High-Graphics 2D War and Turn-Based Game
 * Great for simulating wars in fictional scenarios.
 * Over 100+ Weapons available
 * 35 different kinds of tanks and cannons!
-Beta Testers wanted!
+* Beta Testers wanted!
