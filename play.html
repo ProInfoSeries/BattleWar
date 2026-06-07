@@ -31,9 +31,9 @@
       background: #444;
       clip-path: polygon(0 0, 100% 100%, 0 100%);
       display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 10px;
+      align-items: center;
+      justify-content: flex-start;
+      padding-left: 20px;
       color: white;
       font-size: 20px;
     }
@@ -44,9 +44,9 @@
       background: #444;
       clip-path: polygon(100% 0, 0 100%, 100% 100%);
       display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 20px;
       color: white;
       font-size: 20px;
     }
@@ -55,8 +55,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: clamp(20px, 8vw, 80px);
-      margin-bottom: 20px;
+      gap: 20px;
+      margin: 30px auto;
+      max-width: 800px
     }
 
     .mode-labels {
@@ -249,6 +250,8 @@
       <h2>Multiplayer</h2>
     </div>
     <div class="triangle right">Online</div>
+    <div class="triangle left">2 Player</div>
+    <div class="triangle right">Party</div>
   </div>
 
   <h2 class="difficulty-header">Difficulty</h2>
@@ -272,11 +275,6 @@
     </div>
   </div>
 
-  <div class="triangle-labels bottom">
-    <div class="triangle left">2 Player</div>
-    <div class="triangle right">Party</div>
-  </div>
-
   <h2 class="featured-heading">Featured Maps</h2>
 
   <div class="map-gallery">
@@ -286,7 +284,7 @@
     </div>
     <div class="map-card" onclick="selectMap('Scånia – 1942')">
       <div class="thumbnail">[Thumbnail]</div>
-      <p>Scånia – 1942</p>
+      <p>Skåne – 1942</p>
     </div>
     <div class="map-card" onclick="selectMap('Stockholm – 1942')">
       <div class="thumbnail">[Thumbnail]</div>
