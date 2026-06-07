@@ -9,14 +9,15 @@
 
 <style>
  .trapezoid-title {
-  width: 300px;
+  width: 100%;
+  max-width: 400 px;
   height: 80px;
   background-color: #444;
   clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 40px auto;
+  margin: 0 auto;
   color: white;
   font-size: 28px;
   font-weight: bold;
@@ -51,14 +52,20 @@ body {
 .customization, .main-menu {
   background-color: #252d5a; 
   border: 3px solid #444;    
-  border-radius: 8px;
+  border-radius: 0 0 8px 8px;
   padding: 20px;
-  margin: 20px auto;
+  margin: 0 auto;
+  width: 100%;
   max-width: 400px;
+  box-sizing: border-box;
   text-align: center;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
 }
 
+.main-menu {
+  border-bottom: none;
+  border-radius: 0;
+}
 .customization h2 {
   background-color: #252d5a;
   border: 3px solid #444;
@@ -120,8 +127,9 @@ body {
 
     <label for="volume">Volume:</label>
     <input type="range" id="volume" min="0" max="100" value="50">
-
-</div>  <div class="customization">
+</div>
+  
+ <div class="customization">
       <h2>Customization</h2>
       <label><input type="radio" name="graphics" value="10"> Ultra Low (10%)</label><br>
       <label><input type="radio" name="graphics" value="25"> Low (25%)</label><br>
@@ -131,7 +139,7 @@ body {
     </div>
   </div>
 
-  <footer>
+</div> <footer>
     <p>© Proinfoseries & MyInfoSeries2026</p>
     <p>[Alpha] Version 2.1.2</p>
     <img src="assets/myinfoseries_logo.png" alt="MyInfoSeries Logo" width="100">
