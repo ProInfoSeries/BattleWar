@@ -62,6 +62,7 @@
 }
 
 .settings-panel {
+  display: none;
   background-color: #222;
   border: 2px solid #555;
   border-radius: 8px;
@@ -69,7 +70,22 @@
   margin: 20px auto;
   width: 80%;
   color: white;
+  box-sizing: border-box;
 }
+
+.settings-panel.active-panel {
+  display:block; 
+}
+
+.utility-panel {
+  background-color: #222;
+  border: 2px solid #555;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px auto;
+  width: 80%;
+  color: white;
+  box-sizing: border-box;
 
 .setting-row {
   display: flex;
@@ -166,11 +182,11 @@
 <h1 class="settings-title">Settings</h1>
 
 <div class="settings-tabs">
-  <button class="tab-btn">Online</button>
-  <button class="tab-btn">Fire</button>
-  <button class="tab-btn">Explosion</button>
-  <button class="tab-btn">Weapon</button>
-  <button class="tab-btn">AI</button>
+  <button class="tab-btn active-tab" onclick="switchTab(event, 'panel-online')">Online</button>
+  <button class="tab-btn" onclick="switchTab(event, 'panel-fire')">Fire</button>
+  <button class="tab-btn" onclick="switchTab(event, 'panel-explosion')">Explosion</button>
+  <button class="tab-btn" onclick="switchTab(event, 'panel-weapon')">Weapon</button>
+  <button class="tab-btn" onclick="switchTab(event, 'panel-ai')">AI</button>
 </div>
 
 
@@ -180,13 +196,13 @@
 </div>
 
 
-<div class="settings-panel">
+<div id="panel-online" class="settings-panel active-panel">
   <div class="setting-row">
     <label>Connection Rate:</label>
     <div class="button-group">
-      <button class="setting-btn">1</button>
-      <button class="setting-btn">2</button>
-      <button class="setting-btn">3 or Higher</button>
+      <button class="setting-btn">1 (>30 FPS)</button>
+      <button class="setting-btn">2 (30-120 FPS)</button>
+      <button class="setting-btn">3 or Higher (120+ FPS)</button>
     </div>
   </div>
 
@@ -223,7 +239,7 @@
  </div>
 </div>
 
-<div class="settings-panel">
+<div id="panel-fire" class="settings-panel">
   <div class="setting-row">
     <label>Fire Lengthtivity:</label>
     <div class="button-group">
@@ -288,7 +304,7 @@
   </div>
 </div>
 
-<div class="settings-panel">
+<div id="panel-explosion" class="settings-panel">
   <div class="setting-row">
     <label>Explosion Lengthtivity:</label>
     <div class="button-group">
@@ -339,13 +355,16 @@
     </div>
   </div>
 
-<div class="settings-panel">
+<div id="panel-weapon" class="settings-panel">
   <div class="setting-row">
-    <label>Damage Done:</label>
+    <label>Cannon Range:</label>
     <div class="button-group">
+      <button class="setting-btn">0.25</button>
+      <button class="setting-btn">0.5</button>
+      <button class="setting-btn">1</button>
+      <button class="setting-btn">2</button>
+      <button class="setting-btn">2.5</button>
       <button class="setting-btn">3</button>
-      <button class="setting-btn">4</button>
-      <button class="setting-btn">5</button>
     </div>
   </div>
 
@@ -366,18 +385,12 @@
   </div>
 </div>
 
-
-
-<div class="settings-panel">
   <div class="setting-row">
-    <label>Cannon Range:</label>
+    <label>Damage Done:</label>
     <div class="button-group">
-      <button class="setting-btn">0.25</button>
-      <button class="setting-btn">0.5</button>
-      <button class="setting-btn">1</button>
-      <button class="setting-btn">2</button>
-      <button class="setting-btn">2.5</button>
       <button class="setting-btn">3</button>
+      <button class="setting-btn">4</button>
+      <button class="setting-btn">5</button>
     </div>
   </div>
 
@@ -427,7 +440,7 @@
   </div>
 </div>
 
-<div class="settings-panel">
+<div id="panel-ai" class="settings-panel">
   <div class="setting-row">
     <label>Counter-Tactics:</label>
     <div class="button-group">
@@ -542,19 +555,41 @@
 </div>
 
 <script>
+function switchtab(evt, TargetPanelId) {
+  const panels = document.querySelectorAll('.settings-panel');
+  panels.forEach(panel => panel.classList.remove('active-panel'));
+
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(tab => tab.classList.remove('active-tab'));
+
+  document.getElementById(targetPanelId).classList.add('active-panel');
+  evt.currentTarget.classList.add('active-tab');
+}
+  
 function toggleDropdown() {
   const dropdown = document.getElementById('moreSettingsDropdown');
   dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
 }
 
-// Optional: unlock water settings only if Impossible Pack is active
+// Optional: unlock water settings only if Impossible Pack is active cuz im sh*t and i need to learn
 let impossiblePackUnlocked = true; // Change to false to hide
 
 if (impossiblePackUnlocked) {
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('waterSettings').style.display = 'block';
+    const waterElem = document.getElementById('waterSettings');
+    if (waterElem) waterElem.style.display = 'block';
   });
 }
+
+document.querySelectorAll('.button-group').forEach(group => {
+  group.addEventListener('click', (e) => {
+    if (e.target.classList.contains('setting-btn')) {
+      const buttons = group.querySelectorAll('.setting-btn');
+      buttons.forEach(btn => btn.classList.remove('selected'));
+      e.target.classList.add('selected');
+    }
+  });
+});
 </script>
 
 <div class="settings-panel">
