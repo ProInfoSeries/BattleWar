@@ -74,7 +74,7 @@
 }
 
 .settings-panel.active-panel {
-  display:block; 
+  display:block; !important;
 }
 
 .utility-panel {
@@ -182,11 +182,11 @@
 <h1 class="settings-title">Settings</h1>
 
 <div class="settings-tabs">
-  <button class="tab-btn active-tab" onclick="switchTab(event, 'panel-online')">Online</button>
-  <button class="tab-btn" onclick="switchTab(event, 'panel-fire')">Fire</button>
-  <button class="tab-btn" onclick="switchTab(event, 'panel-explosion')">Explosion</button>
-  <button class="tab-btn" onclick="switchTab(event, 'panel-weapon')">Weapon</button>
-  <button class="tab-btn" onclick="switchTab(event, 'panel-ai')">AI</button>
+  <button class="tab-btn active-tab" onclick="switchTab(this, 'panel-online')">Online</button>
+  <button class="tab-btn" onclick="switchTab(this, 'panel-fire')">Fire</button>
+  <button class="tab-btn" onclick="switchTab(this, 'panel-explosion')">Explosion</button>
+  <button class="tab-btn" onclick="switchTab(this, 'panel-weapon')">Weapon</button>
+  <button class="tab-btn" onclick="switchTab(this, 'panel-ai')">AI</button>
 </div>
 
 
@@ -555,7 +555,7 @@
 </div>
 
 <script>
-function switchtab(evt, TargetPanelId) {
+function switchtab(buttonElement, TargetPanelId) {
   const panels = document.querySelectorAll('.settings-panel');
   panels.forEach(panel => panel.classList.remove('active-panel'));
 
