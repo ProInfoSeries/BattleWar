@@ -568,17 +568,7 @@ function switchtab(buttonElement, TargetPanelId) {
   
 function toggleDropdown() {
   const dropdown = document.getElementById('moreSettingsDropdown');
-  dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-}
-
-// Optional: unlock water settings only if Impossible Pack is active cuz im sh*t and i need to learn
-let impossiblePackUnlocked = true; // Change to false to hide
-
-if (impossiblePackUnlocked) {
-  document.addEventListener("DOMContentLoaded", () => {
-    const waterElem = document.getElementById('waterSettings');
-    if (waterElem) waterElem.style.display = 'block';
-  });
+  dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === ' ') ? 'block' : 'none';
 }
 
 document.querySelectorAll('.button-group').forEach(group => {
@@ -589,7 +579,19 @@ document.querySelectorAll('.button-group').forEach(group => {
       e.target.classList.add('selected');
     }
   });
-});
+}  
+  
+// unlock water settings only if Impossible Pack is active cuz im sh*t and i need to learn
+let impossiblePackUnlocked = true; // Change to false to hide
+
+if (impossiblePackUnlocked) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const waterElem = document.getElementById('waterSettings');
+    if (waterElem) waterElem.style.display = 'block';
+  });
+}
+
+
 </script>
 
 <div class="settings-panel">
@@ -636,16 +638,6 @@ function resetSettings() {
 }
 </script>
 
-<script>
-document.querySelectorAll('.setting-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const group = btn.parentElement.querySelectorAll('.setting-btn');
-    group.forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-  });
-});
-
-</script>
 <div class="triangle-back">
   <a href="index.html" class="triangle-btn">Back</a>
 </div>
