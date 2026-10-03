@@ -7,4 +7,4 @@ High-Graphics 2D War and Turn-Based Game
 * Over 100+ Weapons available
 * 35 different kinds of tanks and cannons!
 * Beta Testers wanted!
-* View at proinfoseries.github.io/BattleWar/index.html
+* Simple and Clean UI under testing thru HTML
