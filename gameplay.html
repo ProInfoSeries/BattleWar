@@ -268,26 +268,36 @@ this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
           }
         });
 
-        const gravity = 140;
-        for (let i = this.projectiles.length - 1; i >= 0; i--) {
-          let p = this.projectiles[i];
+        // Projectile physics
+const gravity = 140;
+for (let i = this.projectiles.length - 1; i >= 0; i--) {
+  let p = this.projectiles[i];
 
-          p.vx += this.wind * dt;
-          p.vy += gravity * dt;
+  p.vx += this.wind * dt;
+  p.vy += gravity * dt;
 
-          p.x += p.vx * dt;
-          p.y += p.vy * dt;
+  p.x += p.vx * dt;
+  p.y += p.vy * dt;
 
-          if (this.isSolidPixel(p.x, p.y) || p.y >= this.mainCanvas.height) {
-            if (p.x >= 0 && p.x <= this.mainCanvas.width) {
-              const blastRadius = 28;
-              this.explosions.push({ x: p.x, y: p.y, radius: 4, alpha: 1 });
-              this.explode(p.x, p.y, blastRadius);
-            }
-            this.projectiles.splice(i, 1);
-            this.mode = MODES.NAVIGATING;
-          }
-        }
+  const hitTerrain = this.isSolidPixel(p.x, p.y);
+
+  const isOutOfBounds = 
+    p.y < -800 || 
+    p.x < -100 || 
+    p.x > this.mainCanvas.width + 100 || 
+    p.y >= this.mainCanvas.height;
+
+  if (hitTerrain || isOutOfBounds) {
+    if (hitTerrain && p.x >= 0 && p.x <= this.mainCanvas.width) {
+      const blastRadius = 28;
+      this.explosions.push({ x: p.x, y: p.y, radius: 4, alpha: 1 });
+      this.explode(p.x, p.y, blastRadius);
+    }
+
+    this.projectiles.splice(i, 1);
+    this.mode = MODES.NAVIGATING;
+  }
+}
 
         for (let i = this.explosions.length - 1; i >= 0; i--) {
           let exp = this.explosions[i];
