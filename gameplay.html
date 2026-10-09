@@ -183,7 +183,7 @@
       fireActiveAsset() {
         const asset = this.getActiveAsset();
         const rad = (asset.angle * Math.PI) / 180;
-        const velocity = asset.power * 2.2;
+        const velocity = asset.power * 4.5;
 
         this.projectiles.push({
           x: asset.x,
@@ -197,13 +197,13 @@
         const currentAsset = this.getActiveAsset();
 
         if (this.mode === MODES.AIMING) {
-          if (this.keys['KeyW']) currentAsset.angle = Math.min(180, currentAsset.angle + 30 * dt);
+          if (this.keys['KeyW']) currentAsset.angle = Math.min(360, currentAsset.angle + 30 * dt);
           if (this.keys['KeyS']) currentAsset.angle = Math.max(0, currentAsset.angle - 30 * dt);
-          if (this.keys['KeyD']) currentAsset.power = Math.min(100, currentAsset.power + 25 * dt);
+          if (this.keys['KeyD']) currentAsset.power = Math.min(250, currentAsset.power + 25 * dt);
           if (this.keys['KeyA']) currentAsset.power = Math.max(10, currentAsset.power - 25 * dt);
         }
 
-        const gravity = 180; 
+        const gravity = 120; 
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
           let p = this.projectiles[i];
 
@@ -216,7 +216,9 @@
           const terrainY = this.terrain[Math.floor(p.x)] || 600;
           if (p.y >= terrainY || p.x < 0 || p.x > this.canvas.width) {
             if (p.x >= 0 && p.x <= this.canvas.width) {
+              const blastRadius = 25;
               this.explosions.push({ x: p.x, y: terrainY, radius: 4, alpha: 1 });
+              this.deformTerrain(p.x, terrainY, blastRadius);
             }
             this.projectiles.splice(i, 1);
             this.mode = MODES.NAVIGATING; 
@@ -251,12 +253,10 @@
         }
         this.ctx.stroke();
 
-        // 2. Draw Assets on Terrain
         const activeAsset = this.getActiveAsset();
         this.assets.forEach(asset => {
           this.ctx.fillStyle = asset.color;
 
-          // Tank Body
           this.ctx.fillRect(asset.x - 12, asset.y - 10, 24, 10);
           const rad = (asset.angle * Math.PI) / 180;
           this.ctx.strokeStyle = '#fff';
@@ -301,6 +301,37 @@
           this.ctx.fill();
         });
       }
+
+      deformTerrain(explosionX, explosionY, radius) {
+  const startX = Math.max(0, Math.floor(explosionX - radius));
+  const endX = Math.min(this.canvas.width, Math.ceil(explosionX + radius));
+
+  for (let x = startX; x <= endX; x++) {
+    const dx = x - explosionX;
+    
+    if (Math.abs(dx) <= radius) {
+
+      const craterDepth = Math.sqrt(radius * radius - dx * dx);
+      const craterBottomY = explosionY + craterDepth;
+
+
+      this.terrain[x] = Math.max(this.terrain[x], craterBottomY);
+    }
+  }
+
+
+  this.updateAssetHeights();
+}
+
+      updateAssetHeights() {
+  this.assets.forEach(asset => {
+    const currentGroundY = this.terrain[Math.floor(asset.x)];
+    
+    if (asset.y < currentGroundY) {
+      asset.y = currentGroundY;
+    }
+  });
+}
 
       updateHUD() {
         const asset = this.getActiveAsset();
