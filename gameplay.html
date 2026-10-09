@@ -55,8 +55,8 @@
 
   <div class="hud-bar">
     <div>Side: <span id="side-indicator" style="color: #0a84ff;">LEFT</span></div>
-    <div>Active Unit: <span id="asset-indicator" class="status-text">Tank #1</span></div>
-    <div>Mode: <span id="mode-indicator" style="color: #00ff88;">SELECTING (WASD)</span></div>
+    <div>Active Unit: <span id="asset-indicator" class="status-text">Tank Alpha</span></div>
+    <div>Mode: <span id="mode-indicator" style="color: #00ff88;">NAVIGATING</span></div>
     <div>Wind: <span id="wind-indicator" style="color: #00d2ff;">0.0</span></div>
   </div>
 
@@ -72,27 +72,19 @@
   <script>
     const MODES = { NAVIGATING: 'NAVIGATING', AIMING: 'AIMING', FIRING: 'FIRING' };
 
-    class ScorchedBattleWarEngine {
+    class PixelBattleWarEngine {
       constructor(canvasId) {
-        this.canvas = document.getElementById(canvasId);
-        this.ctx = this.canvas.getContext('2d');
+        this.mainCanvas = document.getElementById(canvasId);
+        this.mainCtx = this.mainCanvas.getContext('2d');
+
+        this.terrainCanvas = document.createElement('canvas');
+        this.terrainCanvas.width = this.mainCanvas.width;
+        this.terrainCanvas.height = this.mainCanvas.height;
+        this.terrainCtx = this.terrainCanvas.getContext('2d');
 
         this.playerSide = 'LEFT';
         this.mode = MODES.NAVIGATING;
-        this.wind = (Math.random() - 0.5) * 15; 
-        this.terrain = [];
-        this.generateTerrain();
-        this.assets = [
-          { id: 1, name: 'Tank Alpha', x: 100, y: 0, side: 'LEFT', angle: 45, power: 60, color: '#0a84ff' },
-          { id: 2, name: 'Tank Bravo', x: 220, y: 0, side: 'LEFT', angle: 45, power: 65, color: '#0a84ff' },
-          { id: 3, name: 'Artillery Charlie', x: 340, y: 0, side: 'LEFT', angle: 50, power: 70, color: '#0a84ff' },
-          { id: 4, name: 'Enemy Outpost 1', x: 700, y: 0, side: 'RIGHT', angle: 135, power: 60, color: '#ff3b30' },
-          { id: 5, name: 'Enemy Outpost 2', x: 840, y: 0, side: 'RIGHT', angle: 135, power: 60, color: '#ff3b30' }
-        ];
-
-        this.assets.forEach(a => {
-          a.y = this.terrain[Math.floor(a.x)];
-        });
+        this.wind = (Math.random() - 0.5) * 20;
 
         this.selectedAssetIndex = 0;
         this.projectiles = [];
@@ -100,18 +92,72 @@
         this.keys = {};
         this.lastTime = 0;
 
+        this.generateOffscreenTerrain();
+
+        this.assets = [
+          { id: 1, name: 'Tank Alpha', x: 100, y: 100, side: 'LEFT', angle: 45, power: 120, color: '#0a84ff' },
+          { id: 2, name: 'Tank Bravo', x: 240, y: 100, side: 'LEFT', angle: 45, power: 130, color: '#0a84ff' },
+          { id: 3, name: 'Artillery Charlie', x: 380, y: 100, side: 'LEFT', angle: 50, power: 140, color: '#0a84ff' },
+          { id: 4, name: 'Enemy Outpost 1', x: 720, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30' },
+          { id: 5, name: 'Enemy Outpost 2', x: 860, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30' }
+        ];
+
+        this.assets.forEach(a => this.snapAssetToGround(a));
+
         this.initInput();
         this.updateHUD();
         requestAnimationFrame((ts) => this.loop(ts));
       }
 
-      generateTerrain() {
-        for (let x = 0; x <= this.canvas.width; x++) {
-          let height = 380 
-            + Math.sin(x * 0.008) * 50 
-            + Math.sin(x * 0.02) * 20;
-          this.terrain[x] = height;
+      generateOffscreenTerrain() {
+        const ctx = this.terrainCtx;
+        const width = this.terrainCanvas.width;
+        const height = this.terrainCanvas.height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.fillStyle = '#3d2817';
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x++) {
+          let terrainY = 380 + Math.sin(x * 0.008) * 50 + Math.sin(x * 0.02) * 20;
+          ctx.lineTo(x, terrainY);
         }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#4e782e';
+        ctx.lineWidth = 6;
+        ctx.stroke();
+      }
+
+      isSolidPixel(x, y) {
+        if (x < 0 || x >= this.terrainCanvas.width || y < 0 || y >= this.terrainCanvas.height) {
+          return false;
+        }
+        const pixel = this.terrainCtx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+        return pixel[3] > 0; 
+      }
+
+      snapAssetToGround(asset) {
+        let testY = 0;
+        while (testY < this.mainCanvas.height && !this.isSolidPixel(asset.x, testY)) {
+          testY++;
+        }
+        asset.y = testY - 2;
+      }
+
+      explode(x, y, radius) {
+        const ctx = this.terrainCtx;
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
 
       initInput() {
@@ -141,7 +187,6 @@
         }
       }
 
-
       navigateAssetDirectionally(keyCode) {
         const current = this.getActiveAsset();
         const playerAssets = this.assets.filter(a => a.side === this.playerSide);
@@ -153,13 +198,13 @@
           if (candidate === current) return;
 
           const dx = candidate.x - current.x;
-          const dy = candidate.y - current.y; 
+          const dy = candidate.y - current.y;
 
           let isMatch = false;
-          if (keyCode === 'KeyD' && dx > 20) isMatch = true;     
-          if (keyCode === 'KeyA' && dx < -20) isMatch = true;     
-          if (keyCode === 'KeyW' && dy < -10) isMatch = true;      
-          if (keyCode === 'KeyS' && dy > 10) isMatch = true;       
+          if (keyCode === 'KeyD' && dx > 20) isMatch = true;
+          if (keyCode === 'KeyA' && dx < -20) isMatch = true;
+          if (keyCode === 'KeyW' && dy < -10) isMatch = true;
+          if (keyCode === 'KeyS' && dy > 10) isMatch = true;
 
           if (isMatch) {
             const dist = Math.hypot(dx, dy);
@@ -183,13 +228,13 @@
       fireActiveAsset() {
         const asset = this.getActiveAsset();
         const rad = (asset.angle * Math.PI) / 180;
-        const velocity = asset.power * 3.5;
+        const velocity = asset.power * 4.2;
 
         this.projectiles.push({
           x: asset.x,
           y: asset.y - 12,
           vx: Math.cos(rad) * velocity,
-          vy: -Math.sin(rad) * velocity 
+          vy: -Math.sin(rad) * velocity
         });
       }
 
@@ -197,31 +242,36 @@
         const currentAsset = this.getActiveAsset();
 
         if (this.mode === MODES.AIMING) {
-          if (this.keys['KeyW']) currentAsset.angle = Math.min(360, currentAsset.angle + 30 * dt);
+          if (this.keys['KeyW']) currentAsset.angle = Math.min(180, currentAsset.angle + 30 * dt);
           if (this.keys['KeyS']) currentAsset.angle = Math.max(0, currentAsset.angle - 30 * dt);
-          if (this.keys['KeyD']) currentAsset.power = Math.min(250, currentAsset.power + 25 * dt);
-          if (this.keys['KeyA']) currentAsset.power = Math.max(10, currentAsset.power - 25 * dt);
+          if (this.keys['KeyD']) currentAsset.power = Math.min(250, currentAsset.power + 60 * dt);
+          if (this.keys['KeyA']) currentAsset.power = Math.max(10, currentAsset.power - 60 * dt);
         }
 
-        const gravity = 120; 
+        this.assets.forEach(asset => {
+          if (!this.isSolidPixel(asset.x, asset.y + 2) && asset.y < this.mainCanvas.height - 20) {
+            asset.y += 60 * dt;
+          }
+        });
+
+        const gravity = 140;
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
           let p = this.projectiles[i];
 
-          p.vx += this.wind * dt; 
-          p.vy += gravity * dt;  
+          p.vx += this.wind * dt;
+          p.vy += gravity * dt;
 
           p.x += p.vx * dt;
           p.y += p.vy * dt;
 
-          const terrainY = this.terrain[Math.floor(p.x)] || 600;
-          if (p.y >= terrainY || p.x < 0 || p.x > this.canvas.width) {
-            if (p.x >= 0 && p.x <= this.canvas.width) {
-              const blastRadius = 25;
-              this.explosions.push({ x: p.x, y: terrainY, radius: 4, alpha: 1 });
-              this.deformTerrain(p.x, terrainY, blastRadius);
+          if (this.isSolidPixel(p.x, p.y) || p.y >= this.mainCanvas.height) {
+            if (p.x >= 0 && p.x <= this.mainCanvas.width) {
+              const blastRadius = 28;
+              this.explosions.push({ x: p.x, y: p.y, radius: 4, alpha: 1 });
+              this.explode(p.x, p.y, blastRadius);
             }
             this.projectiles.splice(i, 1);
-            this.mode = MODES.NAVIGATING; 
+            this.mode = MODES.NAVIGATING;
           }
         }
 
@@ -236,106 +286,61 @@
       }
 
       render() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = '#3d2817';
-        this.ctx.beginPath();
-        this.ctx.moveTo(0, this.canvas.height);
-        for (let x = 0; x <= this.canvas.width; x++) {
-          this.ctx.lineTo(x, this.terrain[x]);
-        }
-        this.ctx.lineTo(this.canvas.width, this.canvas.height);
-        this.ctx.fill();
-        this.ctx.strokeStyle = '#4e782e';
-        this.ctx.lineWidth = 4;
-        this.ctx.beginPath();
-        for (let x = 0; x <= this.canvas.width; x++) {
-          this.ctx.lineTo(x, this.terrain[x]);
-        }
-        this.ctx.stroke();
+        this.mainCtx.fillStyle = '#121824';
+        this.mainCtx.fillRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+
+        this.mainCtx.drawImage(this.terrainCanvas, 0, 0);
 
         const activeAsset = this.getActiveAsset();
         this.assets.forEach(asset => {
-          this.ctx.fillStyle = asset.color;
+          this.mainCtx.fillStyle = asset.color;
 
-          this.ctx.fillRect(asset.x - 12, asset.y - 10, 24, 10);
+          this.mainCtx.fillRect(asset.x - 12, asset.y - 10, 24, 10);
+
           const rad = (asset.angle * Math.PI) / 180;
-          this.ctx.strokeStyle = '#fff';
-          this.ctx.lineWidth = 3;
-          this.ctx.beginPath();
-          this.ctx.moveTo(asset.x, asset.y - 8);
-          this.ctx.lineTo(asset.x + Math.cos(rad) * 18, asset.y - 8 - Math.sin(rad) * 18);
-          this.ctx.stroke();
+          this.mainCtx.strokeStyle = '#fff';
+          this.mainCtx.lineWidth = 3;
+          this.mainCtx.beginPath();
+          this.mainCtx.moveTo(asset.x, asset.y - 8);
+          this.mainCtx.lineTo(asset.x + Math.cos(rad) * 18, asset.y - 8 - Math.sin(rad) * 18);
+          this.mainCtx.stroke();
+
           if (asset === activeAsset) {
-            this.ctx.strokeStyle = this.mode === MODES.AIMING ? '#ffcc00' : '#00ff88';
-            this.ctx.lineWidth = 2;
-            this.ctx.strokeRect(asset.x - 18, asset.y - 20, 36, 26);
+            this.mainCtx.strokeStyle = this.mode === MODES.AIMING ? '#ffcc00' : '#00ff88';
+            this.mainCtx.lineWidth = 2;
+            this.mainCtx.strokeRect(asset.x - 18, asset.y - 20, 36, 26);
           }
         });
 
         if (this.mode === MODES.AIMING) {
           const rad = (activeAsset.angle * Math.PI) / 180;
-          this.ctx.strokeStyle = 'rgba(255, 204, 0, 0.4)';
-          this.ctx.lineWidth = 2;
-          this.ctx.setLineDash([4, 4]);
-          this.ctx.beginPath();
-          this.ctx.moveTo(activeAsset.x, activeAsset.y - 8);
-          this.ctx.lineTo(
-            activeAsset.x + Math.cos(rad) * activeAsset.power, 
-            activeAsset.y - 8 - Math.sin(rad) * activeAsset.power
+          this.mainCtx.strokeStyle = 'rgba(255, 204, 0, 0.4)';
+          this.mainCtx.lineWidth = 2;
+          this.mainCtx.setLineDash([4, 4]);
+          this.mainCtx.beginPath();
+          this.mainCtx.moveTo(activeAsset.x, activeAsset.y - 8);
+          this.mainCtx.lineTo(
+            activeAsset.x + Math.cos(rad) * (activeAsset.power * 0.8),
+            activeAsset.y - 8 - Math.sin(rad) * (activeAsset.power * 0.8)
           );
-          this.ctx.stroke();
-          this.ctx.setLineDash([]);
+          this.mainCtx.stroke();
+          this.mainCtx.setLineDash([]);
         }
 
         this.projectiles.forEach(p => {
-          this.ctx.fillStyle = '#ffaa00';
-          this.ctx.beginPath();
-          this.ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-          this.ctx.fill();
+          this.mainCtx.fillStyle = '#ffaa00';
+          this.mainCtx.beginPath();
+          this.mainCtx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+          this.mainCtx.fill();
         });
 
         this.explosions.forEach(exp => {
-          this.ctx.fillStyle = `rgba(255, 80, 0, ${Math.max(0, exp.alpha)})`;
-          this.ctx.beginPath();
-          this.ctx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
-          this.ctx.fill();
+          this.mainCtx.fillStyle = `rgba(255, 80, 0, ${Math.max(0, exp.alpha)})`;
+          this.mainCtx.beginPath();
+          this.mainCtx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
+          this.mainCtx.fill();
         });
       }
-
-      deformTerrain(explosionX, explosionY, radius) {
-        const startX = Math.max(0, Math.floor(explosionX - radius));
-        const endX = Math.min(this.canvas.width, Math.ceil(explosionX + radius));
-        const maxDepthY = this.canvas.height - 50;
-
-          for (let x = startX; x <= endX; x++) {
-            const dx = x - explosionX;
-    
-          if (Math.abs(dx) <= radius) {
-            const currentSurfaceY = this.terrain[x];
-
-        const halfHeight = Math.sqrt(radius * radius - dx * dx);
-        const explosionTopY = explosionY - halfHeight;
-        const explosionBottomY = explosionY + halfHeight;
-
-          if (currentSurfaceY <= explosionBottomY && currentSurfaceY >= explosionTopY - 10) {
-            const newHeight = Math.max(currentSurfaceY, explosionBottomY);
-            this.terrain[x] = Math.min(newHeight, maxDepthY);
-      }
-    }
-  }
-
-  this.updateAssetHeights();
-}
-
-      updateAssetHeights() {
-  this.assets.forEach(asset => {
-    const currentGroundY = this.terrain[Math.floor(asset.x)];
-    
-    if (asset.y < currentGroundY) {
-      asset.y = currentGroundY;
-    }
-  });
-}
 
       updateHUD() {
         const asset = this.getActiveAsset();
@@ -358,9 +363,8 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      new ScorchedBattleWarEngine('game-canvas');
+      new PixelBattleWarEngine('game-canvas');
     });
   </script>
-  <script src="gamephysics.js"></script>
 </body>
 </html>
