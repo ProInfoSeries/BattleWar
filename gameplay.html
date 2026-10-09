@@ -70,6 +70,18 @@
   </div>
 
   <script>
+
+    const selectedNation = localStorage.getItem('selectedNation') || 'United States';
+
+const NATION_COLORS = {
+  'United States': '#0a84ff',
+  'Third Reiche': '#7f8c8d',
+  'Soviet Unitions': '#e74c3c',
+  'Japan': '#f1c40f',
+  'Great Britain': '#2ecc71'
+};
+
+const playerColor = NATION_COLORS[selectedNation] || '#0a84ff';
    
 const MAP_THEMES = {
   'Berlin – 1945': { dirtColor: '#3d2817', topColor: '#4e782e', skyColor: '#121824', heightFn: (x) => 380 + Math.sin(x * 0.008) * 50 },
