@@ -183,7 +183,7 @@
       fireActiveAsset() {
         const asset = this.getActiveAsset();
         const rad = (asset.angle * Math.PI) / 180;
-        const velocity = asset.power * 4.5;
+        const velocity = asset.power * 3.5;
 
         this.projectiles.push({
           x: asset.x,
@@ -303,22 +303,26 @@
       }
 
       deformTerrain(explosionX, explosionY, radius) {
-  const startX = Math.max(0, Math.floor(explosionX - radius));
-  const endX = Math.min(this.canvas.width, Math.ceil(explosionX + radius));
+        const startX = Math.max(0, Math.floor(explosionX - radius));
+        const endX = Math.min(this.canvas.width, Math.ceil(explosionX + radius));
+        const maxDepthY = this.canvas.height - 50;
 
-  for (let x = startX; x <= endX; x++) {
-    const dx = x - explosionX;
+          for (let x = startX; x <= endX; x++) {
+            const dx = x - explosionX;
     
-    if (Math.abs(dx) <= radius) {
+          if (Math.abs(dx) <= radius) {
+            const currentSurfaceY = this.terrain[x];
 
-      const craterDepth = Math.sqrt(radius * radius - dx * dx);
-      const craterBottomY = explosionY + craterDepth;
+        const halfHeight = Math.sqrt(radius * radius - dx * dx);
+        const explosionTopY = explosionY - halfHeight;
+        const explosionBottomY = explosionY + halfHeight;
 
-
-      this.terrain[x] = Math.max(this.terrain[x], craterBottomY);
+          if (currentSurfaceY <= explosionBottomY && currentSurfaceY >= explosionTopY - 10) {
+            const newHeight = Math.max(currentSurfaceY, explosionBottomY);
+            this.terrain[x] = Math.min(newHeight, maxDepthY);
+      }
     }
   }
-
 
   this.updateAssetHeights();
 }
