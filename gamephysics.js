@@ -23,7 +23,6 @@ class PixelTerrainEngine {
     ctx.moveTo(0, height);
 
     for (let x = 0; x <= width; x++) {
-
       let terrainY = 380 + Math.sin(x * 0.008) * 50 + Math.sin(x * 0.02) * 20;
       ctx.lineTo(x, terrainY);
     }
@@ -36,48 +35,44 @@ class PixelTerrainEngine {
     ctx.lineWidth = 6;
     ctx.stroke();
   }
-}
-explode(x, y, radius) {
-  const ctx = this.terrainCtx;
 
+  explode(x, y, radius) {
+    const ctx = this.terrainCtx;
 
-  ctx.save();
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
 
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
 
-  ctx.globalCompositeOperation = 'destination-out';
-
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.fill();
-
-
-  ctx.restore();
-}
-render() {
-
-  this.mainCtx.fillStyle = '#121824';
-  this.mainCtx.fillRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
-
-
-  this.mainCtx.drawImage(this.terrainCanvas, 0, 0);
-
-  this.renderEntities();
-}
-isSolidPixel(x, y) {
-  if (x < 0 || x >= this.terrainCanvas.width || y < 0 || y >= this.terrainCanvas.height) {
-    return false;
+    ctx.restore();
   }
 
+  render() {
+    this.mainCtx.fillStyle = '#121824';
+    this.mainCtx.fillRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
 
-  const pixel = this.terrainCtx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+    this.mainCtx.drawImage(this.terrainCanvas, 0, 0);
 
 
-  return pixel[3] > 0;
-}
-
-updateAssetGravity(asset) {
-
-  if (!this.isSolidPixel(asset.x, asset.y)) {
-    asset.y += 2;
+    if (typeof this.renderEntities === 'function') {
+      this.renderEntities();
+    }
   }
-}
+
+  isSolidPixel(x, y) {
+    if (x < 0 || x >= this.terrainCanvas.width || y < 0 || y >= this.terrainCanvas.height) {
+      return false;
+    }
+
+    const pixel = this.terrainCtx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+    return pixel[3] > 0;
+  }
+
+  updateAssetGravity(asset) {
+    if (!this.isSolidPixel(asset.x, asset.y)) {
+      asset.y += 2;
+    }
+  }
+} 
