@@ -70,53 +70,30 @@
   </div>
 
   <script>
-
-    const selectedNation = localStorage.getItem('selectedNation') || 'United States';
-const NATION_THEMES = {
-  'United States': { color: '#0a84ff', flagBg: '#b22234', flagSymbol: '#ffffff', name: 'US' },
-  'Third Reiche': { color: '#7f8c8d', flagBg: '#333333', flagSymbol: '#ffffff', name: 'German' },
-  'Soviet Unitions': { color: '#c0392b', flagBg: '#cc0000', flagSymbol: '#ffcc00', name: 'Soviet' },
-  'Great Britain': { color: '#27ae60', flagBg: '#00247d', flagSymbol: '#cf142b', name: 'British' },
-  'Japan': { color: '#bdc3c7', flagBg: '#ffffff', flagSymbol: '#bc002d', name: 'Japanese' },
-  'Sweden': { color: '#f1c40f', flagBg: '#006aa7', flagSymbol: '#fecc00', name: 'Swedish' }
-};
-const NATION_THEMES = {
-  // Old Nations
-  'French Bourbonate': { color: '#0055a5', name: 'French' },
-  'Great Britain': { color: '#27ae60', name: 'British' },
-  'Confederatia Helvetica': { color: '#e74c3c', name: 'Swiss' },
-
-  // War-Time
-  'Third Reiche': { color: '#7f8c8d', name: 'German' },
-  'Soviet Unitions': { color: '#c0392b', name: 'Soviet' },
-  'Denmark': { color: '#e67e22', name: 'Danish' },
-  'Sweden': { color: '#f1c40f', name: 'Swedish' },
-  'Nederlaand': { color: '#d35400', name: 'Dutch' },
-
-  // Others
-  'United States': { color: '#0a84ff', name: 'US' },
-  'Japan': { color: '#bdc3c7', name: 'Japanese' },
-  'DPRK': { color: '#16a085', name: 'NKorea' },
-  'ROK': { color: '#2980b9', name: 'SKorea' },
-  'Vietnam': { color: '#f39c12', name: 'Vietnamese' }
-};
-
-const playerColor = NATION_COLORS[selectedNation] || '#0a84ff';
-   
-const MAP_THEMES = {
-  'Berlin – 1945': { dirtColor: '#3d2817', topColor: '#4e782e', skyColor: '#121824', heightFn: (x) => 380 + Math.sin(x * 0.008) * 50 },
-  'Syria – 2024': { dirtColor: '#8c6239', topColor: '#d4a359', skyColor: '#1e1b18', heightFn: (x) => 360 + Math.sin(x * 0.015) * 80 },
-  'Moskau – 1941': { dirtColor: '#64748b', topColor: '#e2e8f0', skyColor: '#0f172a', heightFn: (x) => 370 + Math.sin(x * 0.01) * 60 },
-  'Viet Dai/Nam – 1970': { dirtColor: '#2b3a1a', topColor: '#386619', skyColor: '#111a10', heightFn: (x) => 350 + Math.sin(x * 0.02) * 90 }
-};
-
-
-const selectedMapName = localStorage.getItem('selectedMap') || 'Berlin – 1945';
-const selectedDifficulty = localStorage.getItem('selectedDifficulty') || 'Normal';
-
-
-this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
     const MODES = { NAVIGATING: 'NAVIGATING', AIMING: 'AIMING', FIRING: 'FIRING' };
+
+    const MAP_THEMES = {
+      'Berlin – 1945': { dirtColor: '#3d2817', topColor: '#4e782e', skyColor: '#121824', heightFn: (x) => 380 + Math.sin(x * 0.008) * 50 },
+      'Syria – 2024': { dirtColor: '#8c6239', topColor: '#d4a359', skyColor: '#1e1b18', heightFn: (x) => 360 + Math.sin(x * 0.015) * 80 },
+      'Moskau – 1941': { dirtColor: '#64748b', topColor: '#e2e8f0', skyColor: '#0f172a', heightFn: (x) => 370 + Math.sin(x * 0.01) * 60 },
+      'Viet Dai/Nam – 1970': { dirtColor: '#2b3a1a', topColor: '#386619', skyColor: '#111a10', heightFn: (x) => 350 + Math.sin(x * 0.02) * 90 }
+    };
+
+    const NATION_THEMES = {
+      'French Bourbonate': { color: '#0055a5', flagBg: '#002395', flagSymbol: '#ffffff', name: 'French' },
+      'Great Britain': { color: '#27ae60', flagBg: '#00247d', flagSymbol: '#cf142b', name: 'British' },
+      'Confederatia Helvetica': { color: '#e74c3c', flagBg: '#ff0000', flagSymbol: '#ffffff', name: 'Swiss' },
+      'Third Reiche': { color: '#7f8c8d', flagBg: '#333333', flagSymbol: '#ffffff', name: 'German' },
+      'Soviet Unitions': { color: '#c0392b', flagBg: '#cc0000', flagSymbol: '#ffcc00', name: 'Soviet' },
+      'Denmark': { color: '#e67e22', flagBg: '#c60c30', flagSymbol: '#ffffff', name: 'Danish' },
+      'Sweden': { color: '#f1c40f', flagBg: '#006aa7', flagSymbol: '#fecc00', name: 'Swedish' },
+      'Nederlaand': { color: '#d35400', flagBg: '#ae1c28', flagSymbol: '#ffffff', name: 'Dutch' },
+      'United States': { color: '#0a84ff', flagBg: '#b22234', flagSymbol: '#ffffff', name: 'US' },
+      'Japan': { color: '#bdc3c7', flagBg: '#ffffff', flagSymbol: '#bc002d', name: 'Japanese' },
+      'DPRK': { color: '#16a085', flagBg: '#024fa2', flagSymbol: '#ffffff', name: 'NKorea' },
+      'ROK': { color: '#2980b9', flagBg: '#ffffff', flagSymbol: '#003478', name: 'SKorea' },
+      'Vietnam': { color: '#f39c12', flagBg: '#da251d', flagSymbol: '#ff0', name: 'Vietnamese' }
+    };
 
     class BattleWarEngine {
       constructor(canvasId) {
@@ -127,6 +104,13 @@ this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
         this.terrainCanvas.width = this.mainCanvas.width;
         this.terrainCanvas.height = this.mainCanvas.height;
         this.terrainCtx = this.terrainCanvas.getContext('2d');
+
+        const selectedMapName = localStorage.getItem('selectedMap') || 'Berlin – 1945';
+        this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
+
+        const selectedNation = localStorage.getItem('selectedNation') || 'United States';
+        const nationTheme = NATION_THEMES[selectedNation] || NATION_THEMES['United States'];
+        this.playerNationColor = nationTheme.color;
 
         this.playerSide = 'LEFT';
         this.mode = MODES.NAVIGATING;
@@ -141,11 +125,11 @@ this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
         this.generateOffscreenTerrain();
 
         this.assets = [
-          { id: 1, name: 'Tank Alpha', x: 100, y: 100, side: 'LEFT', angle: 45, power: 120, color: '#0a84ff' },
-          { id: 2, name: 'Tank Bravo', x: 240, y: 100, side: 'LEFT', angle: 45, power: 130, color: '#0a84ff' },
-          { id: 3, name: 'Artillery Charlie', x: 380, y: 100, side: 'LEFT', angle: 50, power: 140, color: '#0a84ff' },
-          { id: 4, name: 'Enemy Outpost 1', x: 720, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30' },
-          { id: 5, name: 'Enemy Outpost 2', x: 860, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30' }
+          { id: 1, name: `${nationTheme.name} Alpha`, x: 100, y: 100, side: 'LEFT', angle: 45, power: 120, color: this.playerNationColor, nation: selectedNation },
+          { id: 2, name: `${nationTheme.name} Bravo`, x: 240, y: 100, side: 'LEFT', angle: 45, power: 130, color: this.playerNationColor, nation: selectedNation },
+          { id: 3, name: `${nationTheme.name} Charlie`, x: 380, y: 100, side: 'LEFT', angle: 50, power: 140, color: this.playerNationColor, nation: selectedNation },
+          { id: 4, name: 'Enemy Outpost 1', x: 720, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30', nation: 'Third Reiche' },
+          { id: 5, name: 'Enemy Outpost 2', x: 860, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30', nation: 'Third Reiche' }
         ];
 
         this.assets.forEach(a => this.snapAssetToGround(a));
@@ -162,12 +146,12 @@ this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
 
         ctx.clearRect(0, 0, width, height);
 
-        ctx.fillStyle = '#3d2817';
+        ctx.fillStyle = this.mapTheme.dirtColor;
         ctx.beginPath();
         ctx.moveTo(0, height);
 
         for (let x = 0; x <= width; x++) {
-          let terrainY = 380 + Math.sin(x * 0.008) * 50 + Math.sin(x * 0.02) * 20;
+          let terrainY = this.mapTheme.heightFn(x);
           ctx.lineTo(x, terrainY);
         }
 
@@ -175,7 +159,7 @@ this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
         ctx.closePath();
         ctx.fill();
 
-        ctx.strokeStyle = '#4e782e';
+        ctx.strokeStyle = this.mapTheme.topColor;
         ctx.lineWidth = 6;
         ctx.stroke();
       }
@@ -300,36 +284,30 @@ this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
           }
         });
 
-        // Projectile physics
-const gravity = 140;
-for (let i = this.projectiles.length - 1; i >= 0; i--) {
-  let p = this.projectiles[i];
+        const gravity = 140;
+        for (let i = this.projectiles.length - 1; i >= 0; i--) {
+          let p = this.projectiles[i];
 
-  p.vx += this.wind * dt;
-  p.vy += gravity * dt;
+          p.vx += this.wind * dt;
+          p.vy += gravity * dt;
 
-  p.x += p.vx * dt;
-  p.y += p.vy * dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
 
-  const hitTerrain = this.isSolidPixel(p.x, p.y);
+          const hitTerrain = this.isSolidPixel(p.x, p.y);
+          const isOutOfBounds = p.y < -800 || p.x < -100 || p.x > this.mainCanvas.width + 100 || p.y >= this.mainCanvas.height;
 
-  const isOutOfBounds = 
-    p.y < -800 || 
-    p.x < -100 || 
-    p.x > this.mainCanvas.width + 100 || 
-    p.y >= this.mainCanvas.height;
+          if (hitTerrain || isOutOfBounds) {
+            if (hitTerrain && p.x >= 0 && p.x <= this.mainCanvas.width) {
+              const blastRadius = 28;
+              this.explosions.push({ x: p.x, y: p.y, radius: 4, alpha: 1 });
+              this.explode(p.x, p.y, blastRadius);
+            }
 
-  if (hitTerrain || isOutOfBounds) {
-    if (hitTerrain && p.x >= 0 && p.x <= this.mainCanvas.width) {
-      const blastRadius = 28;
-      this.explosions.push({ x: p.x, y: p.y, radius: 4, alpha: 1 });
-      this.explode(p.x, p.y, blastRadius);
-    }
-
-    this.projectiles.splice(i, 1);
-    this.mode = MODES.NAVIGATING;
-  }
-}
+            this.projectiles.splice(i, 1);
+            this.mode = MODES.NAVIGATING;
+          }
+        }
 
         for (let i = this.explosions.length - 1; i >= 0; i--) {
           let exp = this.explosions[i];
@@ -342,123 +320,87 @@ for (let i = this.projectiles.length - 1; i >= 0; i--) {
       }
 
       render() {
-  // Clear Sky & Render Terrain
-  this.mainCtx.fillStyle = this.mapTheme ? this.mapTheme.skyColor : '#121824';
-  this.mainCtx.fillRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
-  this.mainCtx.drawImage(this.terrainCanvas, 0, 0);
-
-  const activeAsset = this.getActiveAsset();
-  const time = Date.now() * 0.005; // Drives gentle waving animation
-
-  this.assets.forEach(asset => {
-    // Determine flag colors based on nation theme
-    const theme = NATION_THEMES[asset.nation] || { flagBg: asset.color, flagSymbol: '#ffffff' };
-
-    // --- 1. DRAW FLAG POLE & ANIMATED FLAG ---
-    const poleX = asset.side === 'LEFT' ? asset.x - 10 : asset.x + 10;
-    const poleBaseY = asset.y - 10;
-    const poleHeight = 22;
-    const poleTopY = poleBaseY - poleHeight;
-
-    // Pole
-    this.mainCtx.strokeStyle = '#cccccc';
-    this.mainCtx.lineWidth = 2;
-    this.mainCtx.beginPath();
-    this.mainCtx.moveTo(poleX, poleBaseY);
-    this.mainCtx.lineTo(poleX, poleTopY);
-    this.mainCtx.stroke();
-
-    // Waving Flag Canvas Math
-    const flagWidth = 14;
-    const flagHeight = 9;
-    const waveOffset = Math.sin(time + asset.x) * 2; // Subtle wave effect
-    const flagDirection = asset.side === 'LEFT' ? -1 : 1; // Wave away from center
-
-    this.mainCtx.fillStyle = theme.flagBg;
-    this.mainCtx.beginPath();
-    this.mainCtx.moveTo(poleX, poleTopY);
-    this.mainCtx.lineTo(poleX + (flagWidth * flagDirection), poleTopY + waveOffset);
-    this.mainCtx.lineTo(poleX + (flagWidth * flagDirection), poleTopY + flagHeight + waveOffset);
-    this.mainCtx.lineTo(poleX, poleTopY + flagHeight);
-    this.mainCtx.closePath();
-    this.mainCtx.fill();
-
-    // Flag Symbol / Emblem (Inner Accent Circle)
-    this.mainCtx.fillStyle = theme.flagSymbol;
-    this.mainCtx.beginPath();
-    this.mainCtx.arc(
-      poleX + (flagWidth * 0.5 * flagDirection), 
-      poleTopY + (flagHeight * 0.5) + (waveOffset * 0.5), 
-      2, 0, Math.PI * 2
-    );
-    this.mainCtx.fill();
-
-
-    // --- 2. DRAW TANK HULL & CANNON BARREL ---
-    this.mainCtx.fillStyle = asset.color;
-    // Tank Body
-    this.mainCtx.fillRect(asset.x - 12, asset.y - 10, 24, 10);
-
-    // Cannon Barrel
-    const rad = (asset.angle * Math.PI) / 180;
-    this.mainCtx.strokeStyle = '#ffffff';
-    this.mainCtx.lineWidth = 3;
-    this.mainCtx.beginPath();
-    this.mainCtx.moveTo(asset.x, asset.y - 8);
-    this.mainCtx.lineTo(asset.x + Math.cos(rad) * 18, asset.y - 8 - Math.sin(rad) * 18);
-    this.mainCtx.stroke();
-
-    // Selection Indicator Box
-    if (asset === activeAsset) {
-      this.mainCtx.strokeStyle = this.mode === MODES.AIMING ? '#ffcc00' : '#00ff88';
-      this.mainCtx.lineWidth = 2;
-      this.mainCtx.strokeRect(asset.x - 18, asset.y - 32, 36, 38);
-    }
-  });
-
-  // Render Projectiles & Explosions...
-}
-      render() {
-        this.mainCtx.fillStyle = '#121824';
+        this.mainCtx.fillStyle = this.mapTheme.skyColor;
         this.mainCtx.fillRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
-
         this.mainCtx.drawImage(this.terrainCanvas, 0, 0);
 
         const activeAsset = this.getActiveAsset();
-        this.assets.forEach(asset => {
-          this.mainCtx.fillStyle = asset.color;
+        const time = Date.now() * 0.005;
 
+        this.assets.forEach(asset => {
+          const theme = NATION_THEMES[asset.nation] || { flagBg: asset.color, flagSymbol: '#ffffff' };
+
+          // Flag Pole & Waving Flag
+          const poleX = asset.side === 'LEFT' ? asset.x - 10 : asset.x + 10;
+          const poleBaseY = asset.y - 10;
+          const poleHeight = 22;
+          const poleTopY = poleBaseY - poleHeight;
+
+          this.mainCtx.strokeStyle = '#cccccc';
+          this.mainCtx.lineWidth = 2;
+          this.mainCtx.beginPath();
+          this.mainCtx.moveTo(poleX, poleBaseY);
+          this.mainCtx.lineTo(poleX, poleTopY);
+          this.mainCtx.stroke();
+
+          const flagWidth = 14;
+          const flagHeight = 9;
+          const waveOffset = Math.sin(time + asset.x) * 2;
+          const flagDirection = asset.side === 'LEFT' ? -1 : 1;
+
+          this.mainCtx.fillStyle = theme.flagBg;
+          this.mainCtx.beginPath();
+          this.mainCtx.moveTo(poleX, poleTopY);
+          this.mainCtx.lineTo(poleX + (flagWidth * flagDirection), poleTopY + waveOffset);
+          this.mainCtx.lineTo(poleX + (flagWidth * flagDirection), poleTopY + flagHeight + waveOffset);
+          this.mainCtx.lineTo(poleX, poleTopY + flagHeight);
+          this.mainCtx.closePath();
+          this.mainCtx.fill();
+
+          this.mainCtx.fillStyle = theme.flagSymbol;
+          this.mainCtx.beginPath();
+          this.mainCtx.arc(
+            poleX + (flagWidth * 0.5 * flagDirection), 
+            poleTopY + (flagHeight * 0.5) + (waveOffset * 0.5), 
+            2, 0, Math.PI * 2
+          );
+          this.mainCtx.fill();
+
+          // Tank Body
+          this.mainCtx.fillStyle = asset.color;
           this.mainCtx.fillRect(asset.x - 12, asset.y - 10, 24, 10);
 
+          // Cannon Barrel
           const rad = (asset.angle * Math.PI) / 180;
-          this.mainCtx.strokeStyle = '#fff';
+          this.mainCtx.strokeStyle = '#ffffff';
           this.mainCtx.lineWidth = 3;
           this.mainCtx.beginPath();
           this.mainCtx.moveTo(asset.x, asset.y - 8);
           this.mainCtx.lineTo(asset.x + Math.cos(rad) * 18, asset.y - 8 - Math.sin(rad) * 18);
           this.mainCtx.stroke();
 
+          // Aim Trajectory Line when Aiming
+          if (asset === activeAsset && this.mode === MODES.AIMING) {
+            this.mainCtx.strokeStyle = 'rgba(255, 204, 0, 0.4)';
+            this.mainCtx.lineWidth = 2;
+            this.mainCtx.setLineDash([4, 4]);
+            this.mainCtx.beginPath();
+            this.mainCtx.moveTo(asset.x, asset.y - 8);
+            this.mainCtx.lineTo(
+              asset.x + Math.cos(rad) * (asset.power * 0.8),
+              asset.y - 8 - Math.sin(rad) * (asset.power * 0.8)
+            );
+            this.mainCtx.stroke();
+            this.mainCtx.setLineDash([]);
+          }
+
+          // Selection Box
           if (asset === activeAsset) {
             this.mainCtx.strokeStyle = this.mode === MODES.AIMING ? '#ffcc00' : '#00ff88';
             this.mainCtx.lineWidth = 2;
-            this.mainCtx.strokeRect(asset.x - 18, asset.y - 20, 36, 26);
+            this.mainCtx.strokeRect(asset.x - 18, asset.y - 32, 36, 38);
           }
         });
-
-        if (this.mode === MODES.AIMING) {
-          const rad = (activeAsset.angle * Math.PI) / 180;
-          this.mainCtx.strokeStyle = 'rgba(255, 204, 0, 0.4)';
-          this.mainCtx.lineWidth = 2;
-          this.mainCtx.setLineDash([4, 4]);
-          this.mainCtx.beginPath();
-          this.mainCtx.moveTo(activeAsset.x, activeAsset.y - 8);
-          this.mainCtx.lineTo(
-            activeAsset.x + Math.cos(rad) * (activeAsset.power * 0.8),
-            activeAsset.y - 8 - Math.sin(rad) * (activeAsset.power * 0.8)
-          );
-          this.mainCtx.stroke();
-          this.mainCtx.setLineDash([]);
-        }
 
         this.projectiles.forEach(p => {
           this.mainCtx.fillStyle = '#ffaa00';
@@ -473,78 +415,32 @@ for (let i = this.projectiles.length - 1; i >= 0; i--) {
           this.mainCtx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
           this.mainCtx.fill();
         });
-
-        constructor(canvasId) {
-  this.mainCanvas = document.getElementById(canvasId);
-  this.mainCtx = this.mainCanvas.getContext('2d');
-
-  const selectedNation = localStorage.getItem('selectedNation') || 'United States';
-  
-  const nationTheme = NATION_THEMES[selectedNation] || { color: '#0a84ff', name: selectedNation };
-  this.playerNationColor = nationTheme.color;
-
-  this.terrainCanvas = document.createElement('canvas');
-  this.terrainCanvas.width = this.mainCanvas.width;
-  this.terrainCanvas.height = this.mainCanvas.height;
-  this.terrainCtx = this.terrainCanvas.getContext('2d');
-
-  this.playerSide = 'LEFT';
-  this.mode = MODES.NAVIGATING;
-  this.wind = (Math.random() - 0.5) * 20;
-
-  this.selectedAssetIndex = 0;
-  this.projectiles = [];
-  this.explosions = [];
-  this.keys = {};
-  this.lastTime = 0;
-
-  this.generateOffscreenTerrain();
-
-  this.assets = [
-    { id: 1, name: `${nationTheme.name} Alpha`, x: 100, y: 100, side: 'LEFT', angle: 45, power: 120, color: this.playerNationColor },
-    { id: 2, name: `${nationTheme.name} Bravo`, x: 240, y: 100, side: 'LEFT', angle: 45, power: 130, color: this.playerNationColor },
-    { id: 3, name: `${nationTheme.name} Charlie`, x: 380, y: 100, side: 'LEFT', angle: 50, power: 140, color: this.playerNationColor },
-    { id: 4, name: 'Enemy Outpost 1', x: 720, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30' },
-    { id: 5, name: 'Enemy Outpost 2', x: 860, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30' }
-  ];
-
-  this.assets.forEach(a => this.snapAssetToGround(a));
-
-  this.initInput();
-  this.updateHUD();
-  requestAnimationFrame((ts) => this.loop(ts));
-}
       }
 
       updateHUD() {
         const asset = this.getActiveAsset();
-        document.getElementById('side-indicator').textContent = this.playerSide;
-        document.getElementById('asset-indicator').textContent = `${asset.name} (Angle: ${Math.round(asset.angle)}° | Power: ${Math.round(asset.power)})`;
-        document.getElementById('mode-indicator').textContent = this.mode;
-        document.getElementById('wind-indicator').textContent = `${this.wind > 0 ? '→ ' : '← '}${Math.abs(this.wind).toFixed(1)} mph`;
+        
+        const sideElem = document.getElementById('side-indicator');
+        if (sideElem) {
+          sideElem.textContent = `${this.playerSide} (${localStorage.getItem('selectedNation') || 'US'})`;
+          sideElem.style.color = this.playerNationColor;
+        }
+
+        const assetIndicator = document.getElementById('asset-indicator');
+        if (assetIndicator) {
+          assetIndicator.textContent = `${asset.name} (Angle: ${Math.round(asset.angle)}° | Power: ${Math.round(asset.power)})`;
+        }
+
+        const modeIndicator = document.getElementById('mode-indicator');
+        if (modeIndicator) {
+          modeIndicator.textContent = this.mode;
+        }
+
+        const windIndicator = document.getElementById('wind-indicator');
+        if (windIndicator) {
+          windIndicator.textContent = `${this.wind > 0 ? '→ ' : '← '}${Math.abs(this.wind).toFixed(1)} mph`;
+        }
       }
-
-      updateHUD() {
-  const asset = this.getActiveAsset();
-  
-  const sideElem = document.getElementById('side-indicator');
-  if (sideElem) {
-    sideElem.textContent = `${this.playerSide} (${localStorage.getItem('selectedNation') || 'USA'})`;
-    sideElem.style.color = this.playerNationColor; 
-  }
-
-  document.getElementById('asset-indicator').textContent = `${asset.name} (Angle: ${Math.round(asset.angle)}° | Power: ${Math.round(asset.power)})`;
-  document.getElementById('mode-indicator').textContent = this.mode;
-  document.getElementById('wind-indicator').textContent = `${this.wind > 0 ? '→ ' : '← '}${Math.abs(this.wind).toFixed(1)} mph`;
-}
-      const selectedNation = localStorage.getItem('selectedNation') || 'United States';
-const nationTheme = NATION_THEMES[selectedNation] || NATION_THEMES['United States'];
-
-this.assets = [
-  { id: 1, name: `${nationTheme.name} Alpha`, x: 100, y: 100, side: 'LEFT', angle: 45, power: 120, color: nationTheme.color, nation: selectedNation },
-  { id: 2, name: `${nationTheme.name} Bravo`, x: 240, y: 100, side: 'LEFT', angle: 45, power: 130, color: nationTheme.color, nation: selectedNation },
-  { id: 3, name: 'Enemy Outpost 1', x: 720, y: 100, side: 'RIGHT', angle: 135, power: 120, color: '#ff3b30', nation: 'Third Reiche' }
-];
 
       loop(timestamp) {
         if (!this.lastTime) this.lastTime = timestamp;
