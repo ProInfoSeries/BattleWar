@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Play</title>
+  <title>Play - BattleWar</title>
   <link rel="stylesheet" href="style.css">
   <style>
     body {
@@ -11,6 +11,7 @@
       font-family: sans-serif;
       margin: 0;
       padding: 20px;
+      padding-bottom: 100px;
     }
 
     .triangle-labels {
@@ -18,12 +19,6 @@
       justify-content: space-between;
       flex-shrink: 0;
       margin: 20px 0;
-    }
-
-    .triangle {
-      color: white;
-      font-weight: bold;
-      padding: 10px 20px;
     }
 
     .triangle.right {
@@ -96,20 +91,6 @@
       color: white;
     }
 
-    .difficulty-container-box {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .difficulty-section {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
-      gap: 15px;
-    }
-
     .difficulty-center-zone {
       display: flex;
       flex-direction: column;
@@ -121,7 +102,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
-      width: 100%
+      width: 100%;
     }
     
     .difficulty-box {
@@ -131,6 +112,12 @@
       padding: 15px;
       border-radius: 8px;
       box-sizing: border-box;
+      transition: border-color 0.2s ease;
+    }
+
+    .difficulty-box.selected-diff {
+      border: 2px solid #00ff88;
+      background-color: #1a2e22;
     }
 
     .difficulty-box button {
@@ -143,16 +130,11 @@
       color: white;
       border: none;
       border-radius: 4px;
+      transition: background-color 0.2s ease;
     }
     
     .difficulty-box button:hover {
       background-color: #666;
-    }
-
-    .triangle-labels.bottom {
-      margin-top: 20px;
-      margin-left: 10px;
-      margin-right: 10px;
     }
 
     .featured-heading {
@@ -176,6 +158,15 @@
       max-width: 180px;
       text-align: center;
       cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .map-card.selected-map {
+      border-color: #00ff88;
+      background-color: #16241b;
     }
 
     .thumbnail {
@@ -279,6 +270,43 @@
     .back-btn:hover {
       background-color: #666;
     }
+
+    .launch-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #181c24;
+      border-top: 2px solid #00ff88;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      z-index: 1000;
+    }
+
+    .launch-info {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .launch-btn {
+      padding: 12px 28px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #00ff88;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.1s ease, background-color 0.2s ease;
+    }
+
+    .launch-btn:hover {
+      background-color: #00cc6d;
+      transform: scale(1.03);
+    }
   </style>
 </head>
 <body>
@@ -295,25 +323,24 @@
   </div>
 
   <div class="difficulty-row-wrapper">
-    
     <div class="triangle left">2 Player</div>
     
     <div class="difficulty-center-zone">
       <h2 class="difficulty-header">Difficulty</h2>
       <div class="difficulty-grid">
-        <div class="difficulty-box">
+        <div class="difficulty-box" id="diff-Simple">
           <button onclick="selectDifficulty('Simple')">Simple</button>
           <p>AI has no precision on attack</p>
         </div>
-        <div class="difficulty-box">
+        <div class="difficulty-box" id="diff-Easy">
           <button onclick="selectDifficulty('Easy')">Easy</button>
           <p>AI has less precision</p>
         </div>
-        <div class="difficulty-box">
+        <div class="difficulty-box" id="diff-Normal">
           <button onclick="selectDifficulty('Normal')">Normal</button>
           <p>AI has more precision and access to all weapons</p>
         </div>
-        <div class="difficulty-box">
+        <div class="difficulty-box" id="diff-Hard">
           <button onclick="selectDifficulty('Hard')">Hard</button>
           <p>AI has perfect precision and infinite ammo</p>
         </div>
@@ -321,79 +348,76 @@
     </div>
 
     <div class="triangle right">Party</div>
-    
   </div>
-
-     
 
   <h2 class="featured-heading">Featured Maps</h2>
 
   <div class="map-gallery">
-    <div class="map-card" onclick="selectMap('Nijmegen – 1942')">
+    <div class="map-card" data-map="Nijmegen – 1942" onclick="selectMap('Nijmegen – 1942')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Nijmegen – 1942</p>
     </div>
-    <div class="map-card" onclick="selectMap('Scånia – 1942')">
+    <div class="map-card" data-map="Scånia – 1942" onclick="selectMap('Scånia – 1942')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Skåne – 1942</p>
     </div>
-    <div class="map-card" onclick="selectMap('Stockholm – 1942')">
+    <div class="map-card" data-map="Stockholm – 1942" onclick="selectMap('Stockholm – 1942')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Stockholm – 1942</p>
     </div>
-    <div class="map-card" onclick="selectMap('Stockholm – 1943')">
+    <div class="map-card" data-map="Stockholm – 1943" onclick="selectMap('Stockholm – 1943')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Stockholm – 1943</p>
     </div>
-    <div class="map-card" onclick="selectMap('Bern – 1944')">
+    <div class="map-card" data-map="Bern – 1944" onclick="selectMap('Bern – 1944')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Bern – 1944</p>
     </div>
   </div>
 
   <div class="map-gallery">
-    <div class="map-card" onclick="selectMap('Berlin – 1945')">
+    <div class="map-card" data-map="Berlin – 1945" onclick="selectMap('Berlin – 1945')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Berlin – 1945</p>
     </div>
-    <div class="map-card" onclick="selectMap('Warzsawa – 1945')">
+    <div class="map-card" data-map="Warzsawa – 1945" onclick="selectMap('Warzsawa – 1945')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Warzsawa – 1945 (3 Player)</p>
     </div>
-    <div class="map-card" onclick="selectMap('Viet Dai/Nam – 1970')">
+    <div class="map-card" data-map="Viet Dai/Nam – 1970" onclick="selectMap('Viet Dai/Nam – 1970')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Viet Dai/Nam – 1970</p>
     </div>
-    <div class="map-card" onclick="selectMap('Moskau – 1941')">
+    <div class="map-card" data-map="Moskau – 1941" onclick="selectMap('Moskau – 1941')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Moskau – 1941</p>
     </div>
   </div>
 
   <div class="map-gallery">
-    <div class="map-card" onclick="selectMap('Afghanistan – 1988')">
+    <div class="map-card" data-map="Afghanistan – 1988" onclick="selectMap('Afghanistan – 1988')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Afghanistan – 1988 (3 Player + AI)</p>
     </div>
-    <div class="map-card" onclick="selectMap('Afghanistan – 2011')">
+    <div class="map-card" data-map="Afghanistan – 2011" onclick="selectMap('Afghanistan – 2011')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Afghanistan – 2011</p>
     </div>
-    <div class="map-card" onclick="selectMap('Koreas – 1951')">
+    <div class="map-card" data-map="Koreas – 1951" onclick="selectMap('Koreas – 1951')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Koreas – 1951</p>
     </div>
-    <div class="map-card" onclick="selectMap('Syria – 2024')">
+    <div class="map-card" data-map="Syria – 2024" onclick="selectMap('Syria – 2024')">
       <div class="thumbnail">[Thumbnail]</div>
       <p>Syria – 2024</p>
     </div>
   </div>
 
-  <h2 class="map-tools-heading">Map Tools</h2>
+  <h2 class="map-tools-heading">Recommended Maps</h2>
 
   <div class="map-tools-row">
     <button class="map-tool-btn">Map Packs</button>
-    <button class="map-tool-btn">Random Map</button>
+    <button class="map-tool-btn" onclick="selectRandomMap()">Random Map</button>
     <button class="map-tool-btn">Monthly Map</button>
   </div>
 
@@ -414,28 +438,73 @@
   </div>
 
   <div id="othersCard" class="stockcard" style="display:none;">
-    <p>United States, Khalq, Commune, Taliban, ISIS, HTS, Syria, Vietnam, Viet Dai, Afghanistan, DPRK, ROK, Japan</p>
+    <p>United States, Khalq, Commune, Taliban, ISIS, HTS, Syria, Vietnam, Viet Dai/Nam, Afghanistan, DPRK, ROK, Japan</p>
+  </div>
+
+  <div class="launch-bar">
+    <div class="launch-info">
+      Selected Map: <span id="launch-map-text" style="color: #00ff88;">Berlin – 1945</span> | 
+      Difficulty: <span id="launch-diff-text" style="color: #ffcc00;">Normal</span>
+    </div>
+    <button class="launch-btn" onclick="launchGame()">START MATCH →</button>
   </div>
 
   <script>
+    let selectedDifficultySetting = localStorage.getItem('selectedDifficulty') || "Normal";
+    let selectedMapSetting = localStorage.getItem('selectedMap') || "Berlin – 1945";
+
+    const allMaps = [
+      'Nijmegen – 1942', 'Scånia – 1942', 'Stockholm – 1942', 'Stockholm – 1943', 'Bern – 1944',
+      'Berlin – 1945', 'Warzsawa – 1945', 'Viet Dai/Nam – 1970', 'Moskau – 1941',
+      'Afghanistan – 1988', 'Afghanistan – 2011', 'Koreas – 1951', 'Syria – 2024'
+    ];
+
     function toggleCard(id) {
       const cards = document.querySelectorAll('.stockcard');
       cards.forEach(card => card.style.display = 'none');
       document.getElementById(id).style.display = 'block';
     }
 
-    let selectedDifficultySetting = "Normal";
-    let selectedMapSetting = "";
+    function updateUI() {
+      document.querySelectorAll('.difficulty-box').forEach(box => box.classList.remove('selected-diff'));
+      const activeDiffBox = document.getElementById('diff-' + selectedDifficultySetting);
+      if (activeDiffBox) activeDiffBox.classList.add('selected-diff');
+
+      document.querySelectorAll('.map-card').forEach(card => card.classList.remove('selected-map'));
+      const activeMapCard = document.querySelector(`.map-card[data-map="${selectedMapSetting}"]`);
+      if (activeMapCard) activeMapCard.classList.add('selected-map');
+
+      document.getElementById('launch-map-text').textContent = selectedMapSetting;
+      document.getElementById('launch-diff-text').textContent = selectedDifficultySetting;
+    }
 
     function selectDifficulty(level) {
       selectedDifficultySetting = level;
-      alert("Difficulty set to: " + level);
+      localStorage.setItem('selectedDifficulty', level);
+      updateUI();
     }
 
     function selectMap(mapName) {
       selectedMapSetting = mapName;
-      alert("Selected Map: " + mapName);
+      localStorage.setItem('selectedMap', mapName);
+      updateUI();
     }
+
+    function selectRandomMap() {
+      const randomMap = allMaps[Math.floor(Math.random() * allMaps.length)];
+      selectMap(randomMap);
+    }
+
+    function launchGame() {
+      localStorage.setItem('selectedMap', selectedMapSetting);
+      localStorage.setItem('selectedDifficulty', selectedDifficultySetting);
+
+      window.location.href = 'gameplay.html';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateUI();
+    });
   </script>
 
   <script src="script.js"></script>
