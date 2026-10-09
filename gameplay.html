@@ -8,9 +8,9 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #111;
+      background-color: #0b0d12;
       color: #fff;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -24,66 +24,79 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       font-weight: bold;
+      background: #181c24;
+      padding: 10px 18px;
+      border-radius: 6px;
+      box-sizing: border-box;
+      border: 1px solid #2a3242;
     }
 
     #game-canvas {
-      background-color: #1c2419; /* Battlefield terrain background */
-      border: 3px solid #444;
+      background-color: #121824;
+      border: 2px solid #3a4659;
       border-radius: 6px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9);
     }
 
     .controls-hint {
-      margin-top: 12px;
+      margin-top: 14px;
       font-size: 14px;
-      color: #aaa;
+      color: #8a9bb8;
     }
 
-    .wind-readout {
-      color: #00d2ff;
+    .status-text {
+      color: #ffcc00;
     }
   </style>
 </head>
 <body>
 
   <div class="hud-bar">
-    <div>Control Side: <span id="side-indicator" style="color: #0a84ff;">LEFT</span></div>
-    <div>Selected Asset: <span id="asset-indicator" style="color: #ffcc00;">Tank #1</span></div>
-    <div>Wind Vector: <span id="wind-indicator" class="wind-readout">0.0 km/h</span></div>
+    <div>Side: <span id="side-indicator" style="color: #0a84ff;">LEFT</span></div>
+    <div>Active Unit: <span id="asset-indicator" class="status-text">Tank #1</span></div>
+    <div>Mode: <span id="mode-indicator" style="color: #00ff88;">SELECTING (WASD)</span></div>
+    <div>Wind: <span id="wind-indicator" style="color: #00d2ff;">0.0</span></div>
   </div>
 
   <canvas id="game-canvas" width="960" height="540"></canvas>
 
   <div class="controls-hint">
-    <strong>[Q]</strong> Select / Cycle Asset &nbsp;|&nbsp; 
-    <strong>[WASD]</strong> Aim Target Cursor &nbsp;|&nbsp; 
-    <strong>[Q]</strong> Fire Weapon (While Aiming)
+    <strong>[Q]</strong> Toggle Select / Aim Mode &nbsp;|&nbsp; 
+    <strong>[WASD in Select Mode]</strong> Switch to asset in that direction &nbsp;|&nbsp; 
+    <strong>[WASD in Aim Mode]</strong> Aim angle & power &nbsp;|&nbsp; 
+    <strong>[Q in Aim Mode]</strong> Fire!
   </div>
 
   <script>
-    const STATES = { SELECTING: 'SELECTING', AIMING: 'AIMING', FIRING: 'FIRING' };
+    const MODES = { NAVIGATING: 'NAVIGATING', AIMING: 'AIMING', FIRING: 'FIRING' };
 
-    class BattleWarArtilleryEngine {
+    class ScorchedBattleWarEngine {
       constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
+
         this.playerSide = 'LEFT';
-        this.state = STATES.SELECTING;
-        this.wind = { x: (Math.random() - 0.5) * 4, y: (Math.random() - 0.5) * 2 }; 
+        this.mode = MODES.NAVIGATING;
+        this.wind = (Math.random() - 0.5) * 15; 
+        this.terrain = [];
+        this.generateTerrain();
         this.assets = [
-          { id: 1, name: 'Tank #1', x: 120, y: 150, side: 'LEFT', color: '#0a84ff' },
-          { id: 2, name: 'Artillery #2', x: 100, y: 300, side: 'LEFT', color: '#0a84ff' },
-          { id: 3, name: 'Mortar #3', x: 140, y: 440, side: 'LEFT', color: '#0a84ff' },
-          { id: 4, name: 'Enemy Outpost', x: 820, y: 270, side: 'RIGHT', color: '#ff3b30' }
+          { id: 1, name: 'Tank Alpha', x: 100, y: 0, side: 'LEFT', angle: 45, power: 60, color: '#0a84ff' },
+          { id: 2, name: 'Tank Bravo', x: 220, y: 0, side: 'LEFT', angle: 45, power: 65, color: '#0a84ff' },
+          { id: 3, name: 'Artillery Charlie', x: 340, y: 0, side: 'LEFT', angle: 50, power: 70, color: '#0a84ff' },
+          { id: 4, name: 'Enemy Outpost 1', x: 700, y: 0, side: 'RIGHT', angle: 135, power: 60, color: '#ff3b30' },
+          { id: 5, name: 'Enemy Outpost 2', x: 840, y: 0, side: 'RIGHT', angle: 135, power: 60, color: '#ff3b30' }
         ];
 
+        this.assets.forEach(a => {
+          a.y = this.terrain[Math.floor(a.x)];
+        });
+
         this.selectedAssetIndex = 0;
-        this.targetCursor = { x: 0, y: 0, speed: 200 };
         this.projectiles = [];
         this.explosions = [];
-
         this.keys = {};
         this.lastTime = 0;
 
@@ -92,11 +105,25 @@
         requestAnimationFrame((ts) => this.loop(ts));
       }
 
+      generateTerrain() {
+        for (let x = 0; x <= this.canvas.width; x++) {
+          let height = 380 
+            + Math.sin(x * 0.008) * 50 
+            + Math.sin(x * 0.02) * 20;
+          this.terrain[x] = height;
+        }
+      }
+
       initInput() {
         window.addEventListener('keydown', (e) => {
           this.keys[e.code] = true;
+
           if (e.code === 'KeyQ') {
             this.handleQPress();
+          }
+
+          if (this.mode === MODES.NAVIGATING && ['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(e.code)) {
+            this.navigateAssetDirectionally(e.code);
           }
         });
 
@@ -106,70 +133,99 @@
       }
 
       handleQPress() {
-        if (this.state === STATES.SELECTING) {
-          const playerAssets = this.assets.filter(a => a.side === this.playerSide);
-          this.selectedAssetIndex = (this.selectedAssetIndex + 1) % playerAssets.length;
-          
-          const activeAsset = this.getActiveAsset();
-          this.targetCursor.x = activeAsset.x + 300;
-          this.targetCursor.y = activeAsset.y;
-
-          this.state = STATES.AIMING;
-        } else if (this.state === STATES.AIMING) {
+        if (this.mode === MODES.NAVIGATING) {
+          this.mode = MODES.AIMING;
+        } else if (this.mode === MODES.AIMING) {
           this.fireActiveAsset();
-          this.state = STATES.FIRING;
+          this.mode = MODES.FIRING;
+        }
+      }
+
+
+      navigateAssetDirectionally(keyCode) {
+        const current = this.getActiveAsset();
+        const playerAssets = this.assets.filter(a => a.side === this.playerSide);
+
+        let bestMatch = null;
+        let minDistance = Infinity;
+
+        playerAssets.forEach(candidate => {
+          if (candidate === current) return;
+
+          const dx = candidate.x - current.x;
+          const dy = candidate.y - current.y; 
+
+          let isMatch = false;
+          if (keyCode === 'KeyD' && dx > 20) isMatch = true;     
+          if (keyCode === 'KeyA' && dx < -20) isMatch = true;     
+          if (keyCode === 'KeyW' && dy < -10) isMatch = true;      
+          if (keyCode === 'KeyS' && dy > 10) isMatch = true;       
+
+          if (isMatch) {
+            const dist = Math.hypot(dx, dy);
+            if (dist < minDistance) {
+              minDistance = dist;
+              bestMatch = candidate;
+            }
+          }
+        });
+
+        if (bestMatch) {
+          this.selectedAssetIndex = playerAssets.indexOf(bestMatch);
         }
       }
 
       getActiveAsset() {
         const playerAssets = this.assets.filter(a => a.side === this.playerSide);
-        return playerAssets[this.selectedAssetIndex];
+        return playerAssets[this.selectedAssetIndex] || playerAssets[0];
       }
 
       fireActiveAsset() {
-        const activeAsset = this.getActiveAsset();
-        
+        const asset = this.getActiveAsset();
+        const rad = (asset.angle * Math.PI) / 180;
+        const velocity = asset.power * 2.2;
+
         this.projectiles.push({
-          startX: activeAsset.x,
-          startY: activeAsset.y,
-          currentX: activeAsset.x,
-          currentY: activeAsset.y,
-          targetX: this.targetCursor.x,
-          targetY: this.targetCursor.y,
-          progress: 0,
-          speed: 1.2
+          x: asset.x,
+          y: asset.y - 12,
+          vx: Math.cos(rad) * velocity,
+          vy: -Math.sin(rad) * velocity 
         });
       }
 
       update(dt) {
-        if (this.state === STATES.AIMING) {
-          if (this.keys['KeyW']) this.targetCursor.y -= this.targetCursor.speed * dt;
-          if (this.keys['KeyS']) this.targetCursor.y += this.targetCursor.speed * dt;
-          if (this.keys['KeyA']) this.targetCursor.x -= this.targetCursor.speed * dt;
-          if (this.keys['KeyD']) this.targetCursor.x += this.targetCursor.speed * dt;
+        const currentAsset = this.getActiveAsset();
+
+        if (this.mode === MODES.AIMING) {
+          if (this.keys['KeyW']) currentAsset.angle = Math.min(180, currentAsset.angle + 30 * dt);
+          if (this.keys['KeyS']) currentAsset.angle = Math.max(0, currentAsset.angle - 30 * dt);
+          if (this.keys['KeyD']) currentAsset.power = Math.min(100, currentAsset.power + 25 * dt);
+          if (this.keys['KeyA']) currentAsset.power = Math.max(10, currentAsset.power - 25 * dt);
         }
 
+        const gravity = 180; 
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
           let p = this.projectiles[i];
-          p.progress += p.speed * dt;
 
-          p.currentX = p.startX + (p.targetX - p.startX) * p.progress;
-          p.currentY = p.startY + (p.targetY - p.startY) * p.progress - Math.sin(p.progress * Math.PI) * 120;
+          p.vx += this.wind * dt; 
+          p.vy += gravity * dt;  
 
-          if (p.progress >= 1) {
-            const finalImpactX = p.targetX + (this.wind.x * 25);
-            const finalImpactY = p.targetY + (this.wind.y * 25);
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
 
-            this.explosions.push({ x: finalImpactX, y: finalImpactY, radius: 4, maxRadius: 35, alpha: 1 });
+          const terrainY = this.terrain[Math.floor(p.x)] || 600;
+          if (p.y >= terrainY || p.x < 0 || p.x > this.canvas.width) {
+            if (p.x >= 0 && p.x <= this.canvas.width) {
+              this.explosions.push({ x: p.x, y: terrainY, radius: 4, alpha: 1 });
+            }
             this.projectiles.splice(i, 1);
-
-            this.state = STATES.SELECTING;
+            this.mode = MODES.NAVIGATING; 
           }
         }
 
         for (let i = this.explosions.length - 1; i >= 0; i--) {
           let exp = this.explosions[i];
-          exp.radius += 60 * dt;
+          exp.radius += 50 * dt;
           exp.alpha -= 1.5 * dt;
           if (exp.alpha <= 0) this.explosions.splice(i, 1);
         }
@@ -179,40 +235,67 @@
 
       render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = '#3d2817';
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, this.canvas.height);
+        for (let x = 0; x <= this.canvas.width; x++) {
+          this.ctx.lineTo(x, this.terrain[x]);
+        }
+        this.ctx.lineTo(this.canvas.width, this.canvas.height);
+        this.ctx.fill();
+        this.ctx.strokeStyle = '#4e782e';
+        this.ctx.lineWidth = 4;
+        this.ctx.beginPath();
+        for (let x = 0; x <= this.canvas.width; x++) {
+          this.ctx.lineTo(x, this.terrain[x]);
+        }
+        this.ctx.stroke();
 
+        // 2. Draw Assets on Terrain
+        const activeAsset = this.getActiveAsset();
         this.assets.forEach(asset => {
           this.ctx.fillStyle = asset.color;
-          this.ctx.fillRect(asset.x - 15, asset.y - 15, 30, 30);
 
-          if (this.state !== STATES.FIRING && asset === this.getActiveAsset()) {
-            this.ctx.strokeStyle = '#ffcc00';
-            this.ctx.lineWidth = 3;
-            this.ctx.strokeRect(asset.x - 20, asset.y - 20, 40, 40);
+          // Tank Body
+          this.ctx.fillRect(asset.x - 12, asset.y - 10, 24, 10);
+          const rad = (asset.angle * Math.PI) / 180;
+          this.ctx.strokeStyle = '#fff';
+          this.ctx.lineWidth = 3;
+          this.ctx.beginPath();
+          this.ctx.moveTo(asset.x, asset.y - 8);
+          this.ctx.lineTo(asset.x + Math.cos(rad) * 18, asset.y - 8 - Math.sin(rad) * 18);
+          this.ctx.stroke();
+          if (asset === activeAsset) {
+            this.ctx.strokeStyle = this.mode === MODES.AIMING ? '#ffcc00' : '#00ff88';
+            this.ctx.lineWidth = 2;
+            this.ctx.strokeRect(asset.x - 18, asset.y - 20, 36, 26);
           }
         });
-        
-        if (this.state === STATES.AIMING) {
-          this.ctx.strokeStyle = '#00ffff';
-          this.ctx.lineWidth = 2;
 
+        if (this.mode === MODES.AIMING) {
+          const rad = (activeAsset.angle * Math.PI) / 180;
+          this.ctx.strokeStyle = 'rgba(255, 204, 0, 0.4)';
+          this.ctx.lineWidth = 2;
+          this.ctx.setLineDash([4, 4]);
           this.ctx.beginPath();
-          this.ctx.arc(this.targetCursor.x, this.targetCursor.y, 15, 0, Math.PI * 2);
-          this.ctx.moveTo(this.targetCursor.x - 22, this.targetCursor.y);
-          this.ctx.lineTo(this.targetCursor.x + 22, this.targetCursor.y);
-          this.ctx.moveTo(this.targetCursor.x, this.targetCursor.y - 22);
-          this.ctx.lineTo(this.targetCursor.x, this.targetCursor.y + 22);
+          this.ctx.moveTo(activeAsset.x, activeAsset.y - 8);
+          this.ctx.lineTo(
+            activeAsset.x + Math.cos(rad) * activeAsset.power, 
+            activeAsset.y - 8 - Math.sin(rad) * activeAsset.power
+          );
           this.ctx.stroke();
+          this.ctx.setLineDash([]);
         }
 
         this.projectiles.forEach(p => {
           this.ctx.fillStyle = '#ffaa00';
           this.ctx.beginPath();
-          this.ctx.arc(p.currentX, p.currentY, 5, 0, Math.PI * 2);
+          this.ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
           this.ctx.fill();
         });
 
         this.explosions.forEach(exp => {
-          this.ctx.fillStyle = `rgba(255, 69, 0, ${Math.max(0, exp.alpha)})`;
+          this.ctx.fillStyle = `rgba(255, 80, 0, ${Math.max(0, exp.alpha)})`;
           this.ctx.beginPath();
           this.ctx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
           this.ctx.fill();
@@ -220,9 +303,11 @@
       }
 
       updateHUD() {
+        const asset = this.getActiveAsset();
         document.getElementById('side-indicator').textContent = this.playerSide;
-        document.getElementById('asset-indicator').textContent = `${this.getActiveAsset().name} [${this.state}]`;
-        document.getElementById('wind-indicator').textContent = `${(this.wind.x * 10).toFixed(1)} W-E | ${(this.wind.y * 10).toFixed(1)} N-S`;
+        document.getElementById('asset-indicator').textContent = `${asset.name} (Angle: ${Math.round(asset.angle)}° | Power: ${Math.round(asset.power)})`;
+        document.getElementById('mode-indicator').textContent = this.mode;
+        document.getElementById('wind-indicator').textContent = `${this.wind > 0 ? '→ ' : '← '}${Math.abs(this.wind).toFixed(1)} mph`;
       }
 
       loop(timestamp) {
@@ -238,7 +323,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      new BattleWarArtilleryEngine('game-canvas');
+      new ScorchedBattleWarEngine('game-canvas');
     });
   </script>
 </body>
