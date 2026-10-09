@@ -238,6 +238,7 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
     .nation-buttons button:hover {
@@ -254,6 +255,36 @@
       text-align: center;
       font-size: 16px;
     }
+
+    .nation-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .nation-pill {
+      padding: 8px 14px;
+      background-color: #333;
+      border: 1px solid #555;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .nation-pill:hover {
+      background-color: #444;
+      border-color: #008cff;
+    }
+
+    .nation-pill.selected-nation {
+      background-color: #008cff;
+      border-color: #00ff88;
+      color: #000
+      }
 
     .back-btn {
       display: inline-block;
@@ -413,7 +444,7 @@
     </div>
   </div>
 
-  <h2 class="map-tools-heading">Recommended Maps</h2>
+  <h2 class="map-tools-heading">Map Tools</h2>
 
   <div class="map-tools-row">
     <button class="map-tool-btn">Map Packs</button>
@@ -430,20 +461,49 @@
   </div>
 
   <div id="oldetimeCard" class="stockcard" style="display:none;">
-    <p>French Bourbonate, Great Britain, Confederatia Helvetica</p>
+    <div class="nation-list">
+      <span class="nation-pill" onclick="selectNation('French Bourbonate')">French Bourbonate</span>
+      <span class="nation-pill" onclick="selectNation('Great Britain')">Great Britain</span>
+      <span class="nation-pill" onclick="selectNation('Confederatia Helvetica')">Confederatia Helvetica</span>
+    </div>
   </div>
 
   <div id="WartimeCard" class="stockcard" style="display:none;">
-    <p>Frisia, Nederlaand, Third Reiche, Denmark, Sweden, Weimer Provisione, Soviet Unitions, Polish Duchy, Reicheskommissariat</p>
+    <div class="nation-list">
+      <span class="nation-pill" onclick="selectNation('Frisia')">Frisia</span>
+      <span class="nation-pill" onclick="selectNation('Nederlaand')">Nederlaand</span>
+      <span class="nation-pill" onclick="selectNation('Third Reiche')">Third Reiche</span>
+      <span class="nation-pill" onclick="selectNation('Denmark')">Denmark</span>
+      <span class="nation-pill" onclick="selectNation('Sweden')">Sweden</span>
+      <span class="nation-pill" onclick="selectNation('Weimer Provisione')">Weimer Provisione</span>
+      <span class="nation-pill" onclick="selectNation('Soviet Unitions')">Soviet Unitions</span>
+      <span class="nation-pill" onclick="selectNation('Polish Duchy')">Polish Duchy</span>
+      <span class="nation-pill" onclick="selectNation('Reicheskommissariat')">Reicheskommissariat</span>
+    </div>
   </div>
 
   <div id="othersCard" class="stockcard" style="display:none;">
-    <p>United States, Khalq, Commune, Taliban, ISIS, HTS, Syria, Vietnam, Viet Dai/Nam, Afghanistan, DPRK, ROK, Japan</p>
+    <div class="nation-list">
+      <span class="nation-pill" onclick="selectNation('United States')">United States</span>
+      <span class="nation-pill" onclick="selectNation('Khalq')">Khalq</span>
+      <span class="nation-pill" onclick="selectNation('Commune')">Commune</span>
+      <span class="nation-pill" onclick="selectNation('Taliban')">Taliban</span>
+      <span class="nation-pill" onclick="selectNation('ISIS')">ISIS</span>
+      <span class="nation-pill" onclick="selectNation('HTS')">HTS</span>
+      <span class="nation-pill" onclick="selectNation('Syria')">Syria</span>
+      <span class="nation-pill" onclick="selectNation('Vietnam')">Vietnam</span>
+      <span class="nation-pill" onclick="selectNation('Viet Dai')">Viet Dai/Nam</span>
+      <span class="nation-pill" onclick="selectNation('Afghanistan')">Afghanistan</span>
+      <span class="nation-pill" onclick="selectNation('DPRK')">DPRK</span>
+      <span class="nation-pill" onclick="selectNation('ROK')">ROK</span>
+      <span class="nation-pill" onclick="selectNation('Japan')">Japan</span>
+    </div>
   </div>
 
   <div class="launch-bar">
     <div class="launch-info">
-      Selected Map: <span id="launch-map-text" style="color: #00ff88;">Berlin – 1945</span> | 
+      Map: <span id="launch-map-text" style="color: #00ff88;">Berlin – 1945</span> | 
+      Nation: <span id="launch-nation-text" style="color: #008cff;">United States</span> | 
       Difficulty: <span id="launch-diff-text" style="color: #ffcc00;">Normal</span>
     </div>
     <button class="launch-btn" onclick="launchGame()">START MATCH →</button>
@@ -452,6 +512,7 @@
   <script>
     let selectedDifficultySetting = localStorage.getItem('selectedDifficulty') || "Normal";
     let selectedMapSetting = localStorage.getItem('selectedMap') || "Berlin – 1945";
+    let selectedNationSetting = localStorage.getItem('selectedNation') || "United States";
 
     const allMaps = [
       'Nijmegen – 1942', 'Scånia – 1942', 'Stockholm – 1942', 'Stockholm – 1943', 'Bern – 1944',
@@ -474,7 +535,15 @@
       const activeMapCard = document.querySelector(`.map-card[data-map="${selectedMapSetting}"]`);
       if (activeMapCard) activeMapCard.classList.add('selected-map');
 
+      document.querySelectorAll('.nation-pill').forEach(pill => pill.classList.remove('selected-nation'));
+      document.querySelectorAll('.nation-pill').forEach(pill => {
+        if (pill.textContent.trim() === selectedNationSetting) {
+          pill.classList.add('selected-nation');
+        }
+      });
+
       document.getElementById('launch-map-text').textContent = selectedMapSetting;
+      document.getElementById('launch-nation-text').textContent = selectedNationSetting;
       document.getElementById('launch-diff-text').textContent = selectedDifficultySetting;
     }
 
@@ -490,6 +559,12 @@
       updateUI();
     }
 
+    function selectNation(nationName) {
+      selectedNationSetting = nationName;
+      localStorage.setItem('selectedNation', nationName);
+      updateUI();
+    }
+
     function selectRandomMap() {
       const randomMap = allMaps[Math.floor(Math.random() * allMaps.length)];
       selectMap(randomMap);
@@ -498,11 +573,20 @@
     function launchGame() {
       localStorage.setItem('selectedMap', selectedMapSetting);
       localStorage.setItem('selectedDifficulty', selectedDifficultySetting);
+      localStorage.setItem('selectedNation', selectedNationSetting);
 
       window.location.href = 'gameplay.html';
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      const allPills = document.querySelectorAll('.nation-pill');
+      allPills.forEach(pill => {
+        if (pill.textContent.trim() === selectedNationSetting) {
+          const parentCard = pill.closest('.stockcard');
+          if (parentCard) parentCard.style.display = 'block';
+        }
+      });
+
       updateUI();
     });
   </script>
