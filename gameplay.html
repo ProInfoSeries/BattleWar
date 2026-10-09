@@ -70,9 +70,23 @@
   </div>
 
   <script>
+   
+const MAP_THEMES = {
+  'Berlin – 1945': { dirtColor: '#3d2817', topColor: '#4e782e', skyColor: '#121824', heightFn: (x) => 380 + Math.sin(x * 0.008) * 50 },
+  'Syria – 2024': { dirtColor: '#8c6239', topColor: '#d4a359', skyColor: '#1e1b18', heightFn: (x) => 360 + Math.sin(x * 0.015) * 80 },
+  'Moskau – 1941': { dirtColor: '#64748b', topColor: '#e2e8f0', skyColor: '#0f172a', heightFn: (x) => 370 + Math.sin(x * 0.01) * 60 },
+  'Viet Dai/Nam – 1970': { dirtColor: '#2b3a1a', topColor: '#386619', skyColor: '#111a10', heightFn: (x) => 350 + Math.sin(x * 0.02) * 90 }
+};
+
+
+const selectedMapName = localStorage.getItem('selectedMap') || 'Berlin – 1945';
+const selectedDifficulty = localStorage.getItem('selectedDifficulty') || 'Normal';
+
+
+this.mapTheme = MAP_THEMES[selectedMapName] || MAP_THEMES['Berlin – 1945'];
     const MODES = { NAVIGATING: 'NAVIGATING', AIMING: 'AIMING', FIRING: 'FIRING' };
 
-    class PixelBattleWarEngine {
+    class BattleWarEngine {
       constructor(canvasId) {
         this.mainCanvas = document.getElementById(canvasId);
         this.mainCtx = this.mainCanvas.getContext('2d');
@@ -363,7 +377,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      new PixelBattleWarEngine('game-canvas');
+      new BattleWarEngine('game-canvas');
     });
   </script>
 </body>
