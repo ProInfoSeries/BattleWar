@@ -8,6 +8,7 @@ class PixelTerrainEngine {
     this.terrainCanvas.height = this.mainCanvas.height;
     this.terrainCtx = this.terrainCanvas.getContext('2d');
 
+    this.assets = [];
     this.generateOffscreenTerrain();
   }
 
@@ -49,16 +50,20 @@ class PixelTerrainEngine {
     ctx.restore();
   }
 
+  renderEntities() {
+    this.assets.forEach(asset => {
+      this.mainCtx.fillStyle = asset.color || '#ff0000';
+      this.mainCtx.fillRect(asset.x - 10, asset.y - 10, 20, 20);
+    });
+  }
+
   render() {
     this.mainCtx.fillStyle = '#121824';
     this.mainCtx.fillRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
 
     this.mainCtx.drawImage(this.terrainCanvas, 0, 0);
 
-
-    if (typeof this.renderEntities === 'function') {
-      this.renderEntities();
-    }
+    this.renderEntities();
   }
 
   isSolidPixel(x, y) {
@@ -75,4 +80,15 @@ class PixelTerrainEngine {
       asset.y += 2;
     }
   }
-} 
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const engine = new PixelTerrainEngine('game-canvas');
+  
+  function loop() {
+    engine.render();
+    requestAnimationFrame(loop);
+  }
+  
+  loop();
+});
