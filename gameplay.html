@@ -1,23 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-9">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BattleWar Game</title>
-  
-</head>
-<body>
-  <h1>[Insert Nation] vs [Insert Nation]</h1>
   <style>
-
     body {
       margin: 0;
-      background-color: white;
-      color: white;
-
+      padding: 0;
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      min-height: 100vh;
+      user-select: none;
+    }
+
+    .hud-bar {
+      width: 960px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    #game-canvas {
+      background-color: #1c2419; /* Battlefield terrain background */
+      border: 3px solid #444;
+      border-radius: 6px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .controls-hint {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .wind-readout {
+      color: #00d2ff;
+    }
   </style>
+</head>
+<body>
+
+  <div class="hud-bar">
+    <div>Control Side: <span id="side-indicator" style="color: #0a84ff;">LEFT</span></div>
+    <div>Selected Asset: <span id="asset-indicator" style="color: #ffcc00;">Tank #1</span></div>
+    <div>Wind Vector: <span id="wind-indicator" class="wind-readout">0.0 km/h</span></div>
+  </div>
+
+  <canvas id="game-canvas" width="960" height="540"></canvas>
+
+  <div class="controls-hint">
+    <strong>[Q]</strong> Select / Cycle Asset &nbsp;|&nbsp; 
+    <strong>[WASD]</strong> Aim Target Cursor &nbsp;|&nbsp; 
+    <strong>[Q]</strong> Fire Weapon (While Aiming)
+  </div>
+
+  <script>
+    const STATES = { SELECTING: 'SELECTING', AIMING: 'AIMING', FIRING: 'FIRING' };
+
+    class BattleWarArtilleryEngine {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.playerSide = 'LEFT';
+        this.state = STATES.SELECTING;
+        this.wind = { x: (Math.random() - 0.5) * 4, y: (Math.random() - 0.5) * 2 }; 
+        this.assets = [
+          { id: 1, name: 'Tank #1', x: 120, y: 150, side: 'LEFT', color: '#0a84ff' },
+          { id: 2, name: 'Artillery #2', x: 100, y: 300, side: 'LEFT', color: '#0a84ff' },
+          { id: 3, name: 'Mortar #3', x: 140, y: 440, side: 'LEFT', color: '#0a84ff' },
+          { id: 4, name: 'Enemy Outpost', x: 820, y: 270, side: 'RIGHT', color: '#ff3b30' }
+        ];
+
+        this.selectedAssetIndex = 0;
+        this.targetCursor = { x: 0, y: 0, speed: 200 };
+        this.projectiles = [];
+        this.explosions = [];
+
+        this.keys = {};
+        this.lastTime = 0;
+
+        this.initInput();
+        this.updateHUD();
+        requestAnimationFrame((ts) => this.loop(ts));
+      }
+
+      initInput() {
+        window.addEventListener('keydown', (e) => {
+          this.keys[e.code] = true;
+          if (e.code === 'KeyQ') {
+            this.handleQPress();
+          }
+        });
+
+        window.addEventListener('keyup', (e) => {
+          this.keys[e.code] = false;
+        });
+      }
+
+      handleQPress() {
+        if (this.state === STATES.SELECTING) {
+          const playerAssets = this.assets.filter(a => a.side === this.playerSide);
+          this.selectedAssetIndex = (this.selectedAssetIndex + 1) % playerAssets.length;
+          
+          const activeAsset = this.getActiveAsset();
+          this.targetCursor.x = activeAsset.x + 300;
+          this.targetCursor.y = activeAsset.y;
+
+          this.state = STATES.AIMING;
+        } else if (this.state === STATES.AIMING) {
+          this.fireActiveAsset();
+          this.state = STATES.FIRING;
+        }
+      }
+
+      getActiveAsset() {
+        const playerAssets = this.assets.filter(a => a.side === this.playerSide);
+        return playerAssets[this.selectedAssetIndex];
+      }
+
+      fireActiveAsset() {
+        const activeAsset = this.getActiveAsset();
+        
+        this.projectiles.push({
+          startX: activeAsset.x,
+          startY: activeAsset.y,
+          currentX: activeAsset.x,
+          currentY: activeAsset.y,
+          targetX: this.targetCursor.x,
+          targetY: this.targetCursor.y,
+          progress: 0,
+          speed: 1.2
+        });
+      }
+
+      update(dt) {
+        if (this.state === STATES.AIMING) {
+          if (this.keys['KeyW']) this.targetCursor.y -= this.targetCursor.speed * dt;
+          if (this.keys['KeyS']) this.targetCursor.y += this.targetCursor.speed * dt;
+          if (this.keys['KeyA']) this.targetCursor.x -= this.targetCursor.speed * dt;
+          if (this.keys['KeyD']) this.targetCursor.x += this.targetCursor.speed * dt;
+        }
+
+        for (let i = this.projectiles.length - 1; i >= 0; i--) {
+          let p = this.projectiles[i];
+          p.progress += p.speed * dt;
+
+          p.currentX = p.startX + (p.targetX - p.startX) * p.progress;
+          p.currentY = p.startY + (p.targetY - p.startY) * p.progress - Math.sin(p.progress * Math.PI) * 120;
+
+          if (p.progress >= 1) {
+            const finalImpactX = p.targetX + (this.wind.x * 25);
+            const finalImpactY = p.targetY + (this.wind.y * 25);
+
+            this.explosions.push({ x: finalImpactX, y: finalImpactY, radius: 4, maxRadius: 35, alpha: 1 });
+            this.projectiles.splice(i, 1);
+
+            this.state = STATES.SELECTING;
+          }
+        }
+
+        for (let i = this.explosions.length - 1; i >= 0; i--) {
+          let exp = this.explosions[i];
+          exp.radius += 60 * dt;
+          exp.alpha -= 1.5 * dt;
+          if (exp.alpha <= 0) this.explosions.splice(i, 1);
+        }
+
+        this.updateHUD();
+      }
+
+      render() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.assets.forEach(asset => {
+          this.ctx.fillStyle = asset.color;
+          this.ctx.fillRect(asset.x - 15, asset.y - 15, 30, 30);
+
+          if (this.state !== STATES.FIRING && asset === this.getActiveAsset()) {
+            this.ctx.strokeStyle = '#ffcc00';
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeRect(asset.x - 20, asset.y - 20, 40, 40);
+          }
+        });
+        
+        if (this.state === STATES.AIMING) {
+          this.ctx.strokeStyle = '#00ffff';
+          this.ctx.lineWidth = 2;
+
+          this.ctx.beginPath();
+          this.ctx.arc(this.targetCursor.x, this.targetCursor.y, 15, 0, Math.PI * 2);
+          this.ctx.moveTo(this.targetCursor.x - 22, this.targetCursor.y);
+          this.ctx.lineTo(this.targetCursor.x + 22, this.targetCursor.y);
+          this.ctx.moveTo(this.targetCursor.x, this.targetCursor.y - 22);
+          this.ctx.lineTo(this.targetCursor.x, this.targetCursor.y + 22);
+          this.ctx.stroke();
+        }
+
+        this.projectiles.forEach(p => {
+          this.ctx.fillStyle = '#ffaa00';
+          this.ctx.beginPath();
+          this.ctx.arc(p.currentX, p.currentY, 5, 0, Math.PI * 2);
+          this.ctx.fill();
+        });
+
+        this.explosions.forEach(exp => {
+          this.ctx.fillStyle = `rgba(255, 69, 0, ${Math.max(0, exp.alpha)})`;
+          this.ctx.beginPath();
+          this.ctx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
+          this.ctx.fill();
+        });
+      }
+
+      updateHUD() {
+        document.getElementById('side-indicator').textContent = this.playerSide;
+        document.getElementById('asset-indicator').textContent = `${this.getActiveAsset().name} [${this.state}]`;
+        document.getElementById('wind-indicator').textContent = `${(this.wind.x * 10).toFixed(1)} W-E | ${(this.wind.y * 10).toFixed(1)} N-S`;
+      }
+
+      loop(timestamp) {
+        if (!this.lastTime) this.lastTime = timestamp;
+        const dt = (timestamp - this.lastTime) / 1000;
+        this.lastTime = timestamp;
+
+        this.update(dt);
+        this.render();
+
+        requestAnimationFrame((ts) => this.loop(ts));
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      new BattleWarArtilleryEngine('game-canvas');
+    });
+  </script>
 </body>
 </html>
